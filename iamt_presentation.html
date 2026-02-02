@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foundational Access - iAMT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            min-height: 500px;
+            max-height: 800px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            page-break-after: always;
+            page-break-inside: avoid;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4CAF50, #2196F3, #FF9800);
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2em;
+            color: #34495e;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.4em;
+            color: #2980b9;
+            margin: 20px 0 15px 0;
+        }
+
+        h4 {
+            font-size: 1.2em;
+            color: #27ae60;
+            margin: 15px 0 10px 0;
+        }
+
+        .cover-slide {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .cover-slide h1 {
+            font-size: 3.5em;
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .date-placeholder {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-top: 20px;
+        }
+
+        .agenda-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .agenda-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            transition: transform 0.3s ease;
+        }
+
+        .agenda-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .flowchart {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .flowchart-item {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 150px;
+            margin: 10px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .flowchart-item h4 {
+            color: white !important;
+            margin-bottom: 10px;
+        }
+
+        .flowchart-item::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #3498db;
+        }
+
+        .flowchart-item:last-child::after {
+            display: none;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .icon-list {
+            list-style: none;
+        }
+
+        .icon-list li {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .icon-list li:hover {
+            background: #e9ecef;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .checkmark {
+            background: #27ae60;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .x-mark {
+            background: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #f39c12;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .contact-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #27ae60;
+        }
+
+        .steps-container {
+            counter-reset: step-counter;
+        }
+
+        .step {
+            counter-increment: step-counter;
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            position: relative;
+        }
+
+        .step::before {
+            content: counter(step-counter);
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: -15px;
+            top: 20px;
+            font-weight: bold;
+        }
+
+        .step h4 {
+            margin-left: 25px;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #2980b9;
+        }
+
+        @media print {
+            body {
+                background: white;
+                margin: 0;
+                padding: 0;
+            }
+            .navigation {
+                display: none;
+            }
+            .slide {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                display: block !important;
+                page-break-after: always;
+                page-break-inside: avoid;
+                margin: 0;
+                padding: 20px;
+                min-height: auto;
+                max-height: none;
+                border-radius: 0;
+                overflow: visible;
+            }
+            .presentation-container {
+                padding: 0;
+                margin: 0;
+                max-width: none;
+            }
+            .two-column {
+                display: block;
+            }
+            .two-column > div {
+                margin-bottom: 20px;
+            }
+            .flowchart {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .flowchart-item {
+                margin: 10px 0;
+            }
+            .flowchart-item::after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .flowchart {
+                flex-direction: column;
+            }
+            
+            .flowchart-item::after {
+                content: '↓';
+                right: 50%;
+                top: 100%;
+                transform: translateX(50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        
+        <!-- Slide 1: Cover Page -->
+        <div class="slide cover-slide">
+            <div class="slide-number">1</div>
+            <h1>Foundational Access</h1>
+            <h2 style="border: none; color: rgba(255,255,255,0.9); font-size: 1.8em;">iAMT (iFAMS Access Management Team)</h2>
+            <div class="date-placeholder">[Insert Date]</div>
+            <div style="margin-top: 40px; font-size: 1.1em; opacity: 0.9;">
+                Process Guide & Training Manual
+            </div>
+        </div>
+
+        <!-- Slide 2: Table of Contents -->
+        <div class="slide">
+            <div class="slide-number">2</div>
+            <h2>📋 Agenda & Table of Contents</h2>
+            <div class="agenda-grid">
+                <div class="agenda-item">
+                    <h4>1. Team Overview</h4>
+                    <p>iAMT scope and responsibilities</p>
+                </div>
+                <div class="agenda-item">
+                    <h4>2. Access Ticket Creation (IAXS)</h4>
+                    <p>Categories and best practices</p>
+                </div>
+                <div class="agenda-item">
+                    <h4>3. IAM Toolkit</h4>
+                    <p>Identity Management system</p>
+                </div>
+                <div class="agenda-item">
+                    <h4>4. ASOS Overview</h4>
+                    <p>Tier 2 support structure</p>
+                </div>
+                <div class="agenda-item">
+                    <h4>5. Accessing iFAMS</h4>
+                    <p>SSO and PIV exemption processes</p>
+                </div>
+                <div class="agenda-item">
+                    <h4>6. User Access Management</h4>
+                    <p>Viewing and managing user permissions</p>
+                </div>
+                <div class="agenda-item">
+                    <h4>7. Account Reactivation</h4>
+                    <p>Reactivation procedures and requirements</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Team Overview -->
+        <div class="slide">
+            <div class="slide-number">3</div>
+            <h2>👥 iAMT Team Overview</h2>
+            
+            <div class="info-box">
+                <h3>Our Mission</h3>
+                <p><strong>iAMT (iFAMS Access Management Team)</strong> manages iFAMS and Power BI access related to iFAMS exclusively.</p>
+            </div>
+
+            <div class="two-column">
+                <div>
+                    <h3 style="color: #1e7e34;">✅ What We DO Handle</h3>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            All iFAMS access work for Tier 1
+                        </li>
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            Power BI access related to iFAMS
+                        </li>
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            User account provisioning in iFAMS
+                        </li>
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            Account reactivations
+                        </li>
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            Role modifications and updates
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: #c82333;">❌ What We DON'T Handle</h3>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon x-mark">✗</div>
+                            IAM or external systems
+                        </li>
+                        <li>
+                            <div class="icon x-mark">✗</div>
+                            Sandbox and Preprod access
+                        </li>
+                        <li>
+                            <div class="icon x-mark">✗</div>
+                            iFAMS IPPS access requests
+                        </li>
+                        <li>
+                            <div class="icon x-mark">✗</div>
+                            FMS access requests
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>🎯 Key Point</h4>
+                <p>For requests outside our scope, redirect to appropriate teams with proper contact information.</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Scope Details -->
+        <div class="slide">
+            <div class="slide-number">4</div>
+            <h2>🔄 Redirecting Out-of-Scope Requests</h2>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <h4>Sandbox and Preprod Access</h4>
+                    <p><strong>Not managed</strong> by our service desk or provisioned through IAM.</p>
+                    <div class="contact-info">
+                        <strong>📧 Send requests to:</strong> [Insert Link]
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>iFAMS IPPS Access</h4>
+                    <p>Frequently confused with iFAMS due to similar labeling.</p>
+                    <div class="contact-info">
+                        <strong>🎫 Action:</strong> Transfer tickets to Support@Station in CRM<br>
+                        <strong>📞 For assistance:</strong> Station Support Department [Insert Link]
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>FMS Access</h4>
+                    <p>Completely separate system from iFAMS.</p>
+                    <div class="contact-info">
+                        <strong>📧 Direct requests to:</strong> [Insert Contact Info]
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Access Ticket Categories -->
+        <div class="slide">
+            <div class="slide-number">5</div>
+            <h2>🎫 Access Ticket Creation (IAXS)</h2>
+            
+            <h3>Ticket Categories</h3>
+            <div class="flowchart">
+                <div class="flowchart-item">
+                    <h4>NEW</h4>
+                    <p>Users without iFAMS/Power BI access</p>
+                </div>
+                <div class="flowchart-item">
+                    <h4>MODIFY</h4>
+                    <p>Updates to existing accounts & roles</p>
+                </div>
+                <div class="flowchart-item">
+                    <h4>REMOVE</h4>
+                    <p>Remove access in iFAMS</p>
+                </div>
+                <div class="flowchart-item">
+                    <h4>REACTIVATION</h4>
+                    <p>Reactivate user access</p>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Service Item Notes Guidelines</h4>
+                <ul>
+                    <li><strong>Visibility:</strong> Notes are visible to both customer and AMT CSR</li>
+                    <li><strong>Professionalism:</strong> Maintain high standards in documentation</li>
+                    <li><strong>Completeness:</strong> Gather all necessary information during initial contact</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Information Gathering -->
+        <div class="slide">
+            <div class="slide-number">6</div>
+            <h2>📝 Essential Information to Gather</h2>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <h4>Basic User Information</h4>
+                    <ul>
+                        <li>Name and email of person needing access</li>
+                        <li>Supervisor name and email</li>
+                        <li>For Benefits Dept: Director's name and email (separate from supervisor)</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h4>For New Users - Specify Access Type</h4>
+                    <ul>
+                        <li><strong>View Only:</strong> Ability to view iFAMS transactions or queries</li>
+                        <li><strong>Create/Correct:</strong> Ability to create/correct iFAMS transactions</li>
+                        <li><strong>Approve:</strong> Ability to approve iFAMS transactions</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h4>Mirroring Access</h4>
+                    <ul>
+                        <li>Indicate if access is mirroring another user</li>
+                        <li>Include the mirrored user's email address</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h4>Error Documentation</h4>
+                    <ul>
+                        <li>Include exact error message</li>
+                        <li>Provide the document number</li>
+                        <li>Attach screenshots from customer or capture during screen sharing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Best Practices -->
+        <div class="slide">
+            <div class="slide-number">7</div>
+            <h2>⭐ Ticket Management Best Practices</h2>
+            
+            <div class="two-column">
+                <div>
+                    <h3>📞 During Customer Contact</h3>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            Gather complete information during initial call/chat
+                        </li>
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            Attach all relevant details and screenshots
+                        </li>
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            Ensure CRM notes are clear, concise, and professional
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>🔄 Escalation Process</h3>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            GMU inquiries: Transfer to iFAMS@Station
+                        </li>
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            If uncertain: Consult CSR Questions and Escalations room in MS Teams
+                        </li>
+                        <li>
+                            <div class="icon checkmark">✓</div>
+                            Active assistance needed: Transfer to iFAMS@Station or create new IAXS ticket
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>💡 Pro Tip</h4>
+                <p>Thorough documentation helps iAMT CSRs research efficiently and reduces back-and-forth communication.</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: IAM Overview -->
+        <div class="slide">
+            <div class="slide-number">8</div>
+            <h2>🔧 IAM (Identity Management Toolkit)</h2>
+            
+            <div class="info-box">
+                <h3>What is IAM?</h3>
+                <p><strong>IAM (Identity Management Toolkit version 3.1.3.5 [1.5] IAM Provisioning Blue)</strong> is the primary tool used to provision users for access in iFAMS.</p>
+                <div class="contact-info">
+                    <strong>🔗 Access Link:</strong> [Insert Link]
+                </div>
+            </div>
+
+            <h3>🔍 Researching in IAM</h3>
+            <div class="steps-container">
+                <div class="step">
+                    <h4>User Directory Search</h4>
+                    <p>Research is conducted using the User Directory in IAM</p>
+                    <ul>
+                        <li>Search by va.gov email</li>
+                        <li>Search by SEC ID</li>
+                        <li>Search by name (last, first)</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h4>Search Tips</h4>
+                    <ul>
+                        <li><strong>Wildcards:</strong> Use * after email or last name, first initial</li>
+                        <li><strong>Capitalization:</strong> Capitalization matters!</li>
+                        <li><strong>Alternative:</strong> If other methods fail, search by SEC ID</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: IAM Status Options -->
+        <div class="slide">
+            <div class="slide-number">9</div>
+            <h2>📊 IAM Status Options & Filtering</h2>
+            
+            <div class="highlight-box">
+                <h4>🎯 iFAMS Filter</h4>
+                <p>Use the drop-down menu to select iFAMS to filter out other unsupported applications.</p>
+            </div>
+
+            <div class="flowchart">
+                <div class="flowchart-item" style="background: linear-gradient(135deg, #f39c12, #e67e22); color: white;">
+                    <h4 style="color: white;">PENDING</h4>
+                    <p>No iFAMS access yet</p>
+                </div>
+                <div class="flowchart-item" style="background: linear-gradient(135deg, #27ae60, #229954); color: white;">
+                    <h4 style="color: white;">COMPLETED</h4>
+                    <p>Check Account History</p>
+                </div>
+                <div class="flowchart-item" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white;">
+                    <h4 style="color: white;">PENDING REMOVAL</h4>
+                    <p>Access being removed</p>
+                </div>
+            </div>
+
+            <div class="two-column">
+                <div>
+                    <h3 style="color: #1e7e34;">🕐 Pending Status</h3>
+                    <ul>
+                        <li>User will not have access in iFAMS yet</li>
+                        <li>Click iFAMS hyperlink (blue) to view approval status</li>
+                        <li>iFAMS Approver is ASOS</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: #1e7e34;">✅ Completed Status</h3>
+                    <ul>
+                        <li>Check Account History at bottom of IAM</li>
+                        <li>Find the required role</li>
+                        <li>Ensure 48 hours have passed since completion</li>
+                        <li><strong>Power BI:</strong> Can take up to 3 business days</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4>🔍 Verification</h4>
+                <p>Once provisioned, everything in IAM will show under: <strong>System Administrator > Security > Principals</strong> in iFAMS</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: ASOS Overview -->
+        <div class="slide">
+            <div class="slide-number">10</div>
+            <h2>🏢 ASOS (Accounting System Oversight Support Section)</h2>
+            
+            <div class="info-box">
+                <h3>ASOS Role & Responsibilities</h3>
+                <p>ASOS functions as <strong>Tier 2</strong> in the iFAMS Service Desk roles and responsibilities.</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h4>Technical Support</h4>
+                    <p>Provides mid-level technical support for iFAMS customer inquiries about user access management and reference table maintenance.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Collaboration</h4>
+                    <p>Works with and supports the Access Management team to ensure user access aligns with regulations and people are activated promptly.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Compliance & Reporting</h4>
+                    <p>Runs reports to ensure separation of duties requirements are enforced and customer access is accurately reflected in IAM.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Provisioning Management</h4>
+                    <p>Handles all provisioning in IAM, including updates when new security organizations are added or existing users require adjustments.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: How to Access iFAMS -->
+        <div class="slide">
+            <div class="slide-number">11</div>
+            <h2>🔐 How to Access iFAMS</h2>
+            
+            <h3>Single Sign-On (SSO) Requirements</h3>
+            <div class="info-box">
+                <p><strong>iFAMS requires Single Sign-On (SSO) access.</strong></p>
+            </div>
+
+            <div class="two-column">
+                <div>
+                    <h4>🔑 User Requirements</h4>
+                    <ul>
+                        <li>Have SSOI/SSOE under application accounts, OR</li>
+                        <li>Confirm successful login to other VA applications using PIV badge</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>✅ Verification Process</h4>
+                    <ul>
+                        <li>Check individual's Application Accounts in IAM User Directory</li>
+                        <li>If SSO is missing: Ensure setup during onboarding</li>
+                        <li>Otherwise: Customer must create yourIT ticket for access</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>🆔 PIV Exemption Access</h4>
+                <p><strong>What is a PIV Exemption?</strong> Granted by IT for users unable to use a PIV badge.</p>
+                
+                <h4>Login Steps with PIV Exemption:</h4>
+                <ol>
+                    <li>When prompted, click <strong>"View Other Sign-in Options"</strong> on the login screen</li>
+                    <li>Select <strong>"Sign in with Windows Authentication"</strong> to proceed</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 12: Viewing User Access -->
+        <div class="slide">
+            <div class="slide-number">12</div>
+            <h2>👁️ Viewing User Access in iFAMS</h2>
+            
+            <div class="highlight-box">
+                <h4>📍 Navigation Path</h4>
+                <p><strong>System Administration > Security > Principals</strong></p>
+                <p>View iFAMS access details for specific users. Initial screen displays Active/Inactive Status.</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h4>Access User Details</h4>
+                    <ol>
+                        <li>Select the radio button next to the user's name</li>
+                        <li>Click <strong>Open</strong> to access the User tab</li>
+                    </ol>
+                </div>
+            </div>
+
+            <h3>🔍 Key Fields on User Tab</h3>
+            <div class="two-column">
+                <div>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon checkmark">1</div>
+                            <strong>Default Sec Org:</strong> Auto-populates if blank during document creation
+                        </li>
+                        <li>
+                            <div class="icon checkmark">2</div>
+                            <strong>Active Flag:</strong> User account activity status
+                        </li>
+                        <li>
+                            <div class="icon checkmark">3</div>
+                            <strong>Contracting Officer Flag:</strong> Identifies CO access
+                        </li>
+                        <li>
+                            <div class="icon checkmark">4</div>
+                            <strong>Business Analytics User Flag:</strong> Critical for Power BI data population
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon checkmark">5</div>
+                            <strong>Activation Date:</strong> Account activation date
+                        </li>
+                        <li>
+                            <div class="icon checkmark">6</div>
+                            <strong>Email Address:</strong> User's email address
+                        </li>
+                        <li>
+                            <div class="icon checkmark">7</div>
+                            <strong>External User ID:</strong> Must match SEC ID in IAM
+                        </li>
+                        <li>
+                            <div class="icon checkmark">8</div>
+                            <strong>FPDS User ID:</strong> Relevant only for contracting individuals
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Critical Points</h4>
+                <ul>
+                    <li><strong>Business Analytics Flag:</strong> If unchecked, data will NOT populate in Power BI</li>
+                    <li><strong>External User ID:</strong> If mismatched with SEC ID, user cannot log in</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 13: Account Reactivation -->
+        <div class="slide">
+            <div class="slide-number">13</div>
+            <h2>🔄 Reactivation of iFAMS Account</h2>
+            
+            <div class="info-box">
+                <h4>📋 Reactivation Process</h4>
+                <p>Requests are routed to the iAMT CRM Workbasket: <strong>iFAMS@Station</strong></p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h4>Same-Day Login Requirement</h4>
+                    <p><strong>Critical:</strong> Once reactivated, the user must log into iFAMS the same day to prevent the system from marking the account inactive again overnight.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Verify IAM Roles</h4>
+                    <p>If user is Inactive and requesting reactivation:</p>
+                    <ul>
+                        <li>Check IAM to confirm the individual has <strong>Completed iFAMS</strong></li>
+                        <li>If not completed, submit new requests before they can gain access</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h4>Maintaining Active Status</h4>
+                    <p>To avoid future deactivation, users should:</p>
+                    <ul>
+                        <li>Regularly log in to iFAMS via the iFAMS Gateway Site</li>
+                        <li>Click the <strong>iFAMS Momentum Financials</strong> link to ensure account remains active</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⏰ 90-Day Rule</h4>
+                <p><strong>Important:</strong> Users who have not logged into iFAMS for 90 days will be deactivated and will need to enter a ticket via the iFAMS Customer Self Service Portal to be reactivated.</p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Quick Reference -->
+        <div class="slide">
+            <div class="slide-number">14</div>
+            <h2>📚 Quick Reference Guide</h2>
+            
+            <div class="two-column">
+                <div>
+                    <h3>🎫 Ticket Types</h3>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon checkmark">N</div>
+                            <strong>NEW:</strong> No existing access
+                        </li>
+                        <li>
+                            <div class="icon checkmark">M</div>
+                            <strong>MODIFY:</strong> Update existing roles
+                        </li>
+                        <li>
+                            <div class="icon checkmark">R</div>
+                            <strong>REMOVE:</strong> Remove access
+                        </li>
+                        <li>
+                            <div class="icon checkmark">A</div>
+                            <strong>REACTIVATION:</strong> Restore access
+                        </li>
+                    </ul>
+
+                    <h3>⏱️ Processing Times</h3>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon checkmark">⚡</div>
+                            Standard iFAMS: 48 hours
+                        </li>
+                        <li>
+                            <div class="icon checkmark">📊</div>
+                            Power BI: Up to 3 business days
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>🔍 IAM Search Methods</h3>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon checkmark">@</div>
+                            va.gov email address
+                        </li>
+                        <li>
+                            <div class="icon checkmark">#</div>
+                            SEC ID number
+                        </li>
+                        <li>
+                            <div class="icon checkmark">👤</div>
+                            Name (last, first)
+                        </li>
+                        <li>
+                            <div class="icon checkmark">*</div>
+                            Use wildcards for better results
+                        </li>
+                    </ul>
+
+                    <h3>📍 Key Navigation</h3>
+                    <ul class="icon-list">
+                        <li>
+                            <div class="icon checkmark">🔒</div>
+                            System Admin > Security > Principals
+                        </li>
+                        <li>
+                            <div class="icon checkmark">📧</div>
+                            Route to: iFAMS@Station
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Contact Information -->
+        <div class="slide">
+            <div class="slide-number">15</div>
+            <h2>📞 Contact Information & Resources</h2>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <h4>iAMT Team</h4>
+                    <div class="contact-info">
+                        <strong>📧 Email:</strong> iFAMS@Station<br>
+                        <strong>🎫 Workbasket:</strong> iFAMS@Station CRM Workbasket
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Escalation Support</h4>
+                    <div class="contact-info">
+                        <strong>💬 MS Teams:</strong> CSR Questions and Escalations room<br>
+                        <strong>📋 For uncertainties:</strong> Consult team before proceeding
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Out-of-Scope Requests</h4>
+                    <div class="contact-info">
+                        <strong>🔧 Sandbox/Preprod:</strong> [Insert Link]<br>
+                        <strong>🏢 Station Support:</strong> Support@Station<br>
+                        <strong>💼 FMS Access:</strong> [Insert Contact Info]
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>IAM Access</h4>
+                    <div class="contact-info">
+                        <strong>🔗 IAM Portal:</strong> [Insert Link]<br>
+                        <strong>🆔 yourIT Tickets:</strong> For SSO access issues
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Questions -->
+        <div class="slide">
+            <div class="slide-number">16</div>
+            <h2 style="text-align: center; margin-top: 200px;">❓ Questions?</h2>
+            
+            <div style="text-align: center; margin-top: 100px;">
+                <div style="font-size: 1.5em; color: #666; margin-bottom: 30px;">
+                    Thank you for your attention!
+                </div>
+                
+                <div class="info-box" style="display: inline-block; text-align: left; max-width: 600px;">
+                    <h4>📧 For additional questions or clarifications:</h4>
+                    <ul>
+                        <li>Contact your supervisor</li>
+                        <li>Reach out to the iAMT team at iFAMS@Station</li>
+                        <li>Use the CSR Questions and Escalations room in MS Teams</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <button class="nav-button" onclick="previousSlide()">← Previous</button>
+        <button class="nav-button" onclick="nextSlide()">Next →</button>
+        <button class="nav-button" onclick="window.print()">🖨️ Print</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            // For screen viewing only - don't hide slides for printing
+            if (!window.matchMedia('print').matches) {
+                slides.forEach(slide => slide.style.display = 'none');
+                if (n >= slides.length) currentSlide = 0;
+                if (n < 0) currentSlide = slides.length - 1;
+                slides[currentSlide].style.display = 'block';
+            }
+        }
+        
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+        
+        function previousSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+        
+        // Initialize
+        showSlide(0);
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+    </script>
+</body>
+</html>
