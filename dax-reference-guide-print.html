@@ -445,9 +445,7 @@
         <h3>🔁 Power Query Column Renames — Team_Performance_Queue_Detail</h3>
         <table class="rel-table">
           <tr><th>Original CSV Name</th><th>Power BI Name (use this in DAX)</th></tr>
-          <tr><td>Average Sentiment Score</td><td><code>Avg Sentiment Score</code></td></tr>
-          <tr><td>Negative Sentiment Instances</td><td><code>Neg Instances</code></td></tr>
-          <tr><td>Positive Sentiment Instances</td><td><code>Pos Instances</code></td></tr>
+
           <tr><td>Service Level %</td><td><code>Svc Level%</code></td></tr>
           <tr><td>ASA</td><td><code>AvgSpeedAnswer</code></td></tr>
         </table>
@@ -889,21 +887,20 @@ Total Handle (s) = SUM( Team_Performance_Queue_Detail[Total Handle] )</pre></div
 
       <div class="card card-wide">
         <div class="card-header">
-          <div class="measure-name">⚠️ Sentiment Column Name Reference — Different names per table!</div>
-          <div class="tag-row"><span class="tag tag-type">Important</span></div>
+          <div class="measure-name">✅ Sentiment Column Names — Unified Across Both Tables</div>
+          <div class="measure-desc">Sentiment renames removed from Power Query — both tables now use original Genesys column names. Svc Level% and AvgSpeedAnswer are still renamed in Queue Detail.</div>
+          <div class="tag-row"><span class="tag tag-type">Reference</span></div>
         </div>
-        <div class="card-body"><pre>-- Agent_Performance_Summary uses ORIGINAL names:
-Agent_Performance_Summary[Positive Sentiment Instances]
-Agent_Performance_Summary[Negative Sentiment Instances]
-Agent_Performance_Summary[Average Sentiment Score]
-Agent_Performance_Summary[Sentiment Instances]
+        <div class="card-body"><pre>-- Both tables now use IDENTICAL sentiment column names:
+[Positive Sentiment Instances]   -- same in both tables
+[Negative Sentiment Instances]   -- same in both tables
+[Average Sentiment Score]        -- same in both tables
+[Sentiment Instances]            -- same in both tables
 
--- Team_Performance_Queue_Detail uses RENAMED names:
-Team_Performance_Queue_Detail[Pos Instances]          -- renamed
-Team_Performance_Queue_Detail[Neg Instances]          -- renamed
-Team_Performance_Queue_Detail[Avg Sentiment Score]    -- renamed
-Team_Performance_Queue_Detail[Sentiment Instances]    -- unchanged
-Team_Performance_Queue_Detail[Avg Sentiment]          -- unchanged (different metric)</pre></div>
+-- Team_Performance_Queue_Detail ONLY (still renamed):
+[Svc Level%]        -- renamed from "Service Level %"
+[AvgSpeedAnswer]    -- renamed from "ASA"
+[Avg Sentiment]     -- separate metric, not renamed</pre></div>
       </div>
 
       <div class="card">
@@ -941,13 +938,13 @@ DIVIDE(
           <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE / SUM</span></div>
         </div>
         <div class="card-body"><pre>Avg Sentiment Score (Queue) =
-AVERAGE( Team_Performance_Queue_Detail[Avg Sentiment Score] )
+AVERAGE( Team_Performance_Queue_Detail[Average Sentiment Score] )
 
-Total Pos Instances (Queue) =
-SUM( Team_Performance_Queue_Detail[Pos Instances] )
+Total Positive Instances (Queue) =
+SUM( Team_Performance_Queue_Detail[Positive Sentiment Instances] )
 
-Total Neg Instances (Queue) =
-SUM( Team_Performance_Queue_Detail[Neg Instances] )
+Total Negative Instances (Queue) =
+SUM( Team_Performance_Queue_Detail[Negative Sentiment Instances] )
 
 Avg Sentiment (Queue) =
 AVERAGE( Team_Performance_Queue_Detail[Avg Sentiment] )</pre></div>

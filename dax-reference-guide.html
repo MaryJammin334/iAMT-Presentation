@@ -178,9 +178,7 @@
       <p>Your M code renames these columns — use the RIGHT column in all DAX measures:</p>
       <table class="rel-table">
         <tr><th>Original CSV Name</th><th>Power BI Name (use this in DAX)</th></tr>
-        <tr><td>Average Sentiment Score</td><td><code>Avg Sentiment Score</code></td></tr>
-        <tr><td>Negative Sentiment Instances</td><td><code>Neg Instances</code></td></tr>
-        <tr><td>Positive Sentiment Instances</td><td><code>Pos Instances</code></td></tr>
+
         <tr><td>Service Level %</td><td><code>Svc Level%</code></td></tr>
         <tr><td>ASA</td><td><code>AvgSpeedAnswer</code></td></tr>
       </table>
@@ -1067,27 +1065,25 @@ SUM( Team_Performance_Queue_Detail[Total Handle] )</pre></div>
     </div>
     <div class="cards">
 
-      <div class="card card-wide" data-search="sentiment column name reference table differences">
+      <div class="card card-wide" data-search="sentiment column name reference table unified">
         <div class="card-header">
           <div class="card-meta">
-            <div class="measure-name">⚠️ Sentiment Column Name Reference</div>
-            <div class="measure-desc">Same data, different names — Power Query renamed these in Team_Performance_Queue_Detail only.</div>
-            <div class="tag-row"><span class="tag tag-type">Important Reference</span></div>
+            <div class="measure-name">✅ Sentiment Column Names — Unified Across Both Tables</div>
+            <div class="measure-desc">Sentiment renames removed from Power Query — both tables now use the original Genesys column names. Note: Avg Sentiment is a separate metric from Average Sentiment Score.</div>
+            <div class="tag-row"><span class="tag tag-type">Reference</span></div>
           </div>
           <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
         </div>
-        <div class="card-body"><pre>-- Agent_Performance_Summary uses ORIGINAL names:
-Agent_Performance_Summary[Positive Sentiment Instances]
-Agent_Performance_Summary[Negative Sentiment Instances]
-Agent_Performance_Summary[Average Sentiment Score]
-Agent_Performance_Summary[Sentiment Instances]
+        <div class="card-body"><pre>-- Both tables now use IDENTICAL sentiment column names:
+[Positive Sentiment Instances]   -- same in both tables
+[Negative Sentiment Instances]   -- same in both tables
+[Average Sentiment Score]        -- same in both tables
+[Sentiment Instances]            -- same in both tables
 
--- Team_Performance_Queue_Detail uses RENAMED names (Power Query):
-Team_Performance_Queue_Detail[Pos Instances]         -- renamed
-Team_Performance_Queue_Detail[Neg Instances]         -- renamed
-Team_Performance_Queue_Detail[Avg Sentiment Score]   -- renamed
-Team_Performance_Queue_Detail[Sentiment Instances]   -- unchanged
-Team_Performance_Queue_Detail[Avg Sentiment]         -- unchanged (different metric)</pre></div>
+-- Team_Performance_Queue_Detail ONLY (still renamed):
+[Svc Level%]                     -- renamed from "Service Level %"
+[AvgSpeedAnswer]                 -- renamed from "ASA"
+[Avg Sentiment]                  -- separate metric, not renamed</pre></div>
       </div>
 
       <div class="card" data-search="avg average sentiment score agent performance">
@@ -1167,33 +1163,33 @@ DIVIDE(
         <div class="card-header">
           <div class="card-meta">
             <div class="measure-name">Avg Sentiment Score (Queue)</div>
-            <div class="measure-desc">Queue-level sentiment score. Column renamed from "Average Sentiment Score" to "Avg Sentiment Score" by Power Query.</div>
+            <div class="measure-desc">Queue-level sentiment score. Now uses the same column name as the agent table — Average Sentiment Score.</div>
             <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE</span></div>
           </div>
           <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
         </div>
         <div class="card-body"><pre>Avg Sentiment Score (Queue) =
-AVERAGE( Team_Performance_Queue_Detail[Avg Sentiment Score] )
+AVERAGE( Team_Performance_Queue_Detail[Average Sentiment Score] )
 
 -- Also available — different metric:
 Avg Sentiment (Queue) =
 AVERAGE( Team_Performance_Queue_Detail[Avg Sentiment] )</pre></div>
       </div>
 
-      <div class="card" data-search="positive negative instances queue team renamed">
+      <div class="card" data-search="positive negative instances queue team sentiment">
         <div class="card-header">
           <div class="card-meta">
             <div class="measure-name">Pos / Neg Instances (Queue)</div>
-            <div class="measure-desc">Renamed by Power Query — use Pos Instances and Neg Instances for this table.</div>
+            <div class="measure-desc">Now uses original Genesys column names — same as Agent_Performance_Summary.</div>
             <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
           </div>
           <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
         </div>
-        <div class="card-body"><pre>Total Pos Instances (Queue) =
-SUM( Team_Performance_Queue_Detail[Pos Instances] )
+        <div class="card-body"><pre>Total Positive Instances (Queue) =
+SUM( Team_Performance_Queue_Detail[Positive Sentiment Instances] )
 
-Total Neg Instances (Queue) =
-SUM( Team_Performance_Queue_Detail[Neg Instances] )</pre></div>
+Total Negative Instances (Queue) =
+SUM( Team_Performance_Queue_Detail[Negative Sentiment Instances] )</pre></div>
       </div>
 
     </div>
