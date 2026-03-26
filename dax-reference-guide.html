@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>iFAMS DAX Reference Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy: #092E57;
+    --navy-light: #0e3f78;
+    --navy-dark: #061e38;
+    --red: #C4272E;
+    --gray: #E6E7E8;
+    --bg: #07192e;
+    --surface: #0d2540;
+    --surface2: #112c4a;
+    --surface3: #163458;
+    --code-bg: #040f1c;
+    --text: #e8edf2;
+    --text-muted: #8ca0b8;
+    --success: #2ecc87;
+    --border: rgba(100,150,210,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, #1a4a7a 100%);
+    border-bottom: 3px solid var(--red);
+    padding: 28px 40px 24px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  }
+  .header-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 18px; }
+  .header-title { display: flex; align-items: center; gap: 14px; }
+  .logo-block { width: 44px; height: 44px; background: var(--red); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: white; letter-spacing: -1px; flex-shrink: 0; }
+  h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; color: #fff; line-height: 1; }
+  h1 span { color: var(--red); }
+  .subtitle { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 3px; font-weight: 600; }
+  .header-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.08); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 0.7rem; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .search-wrap { position: relative; flex: 1; min-width: 220px; max-width: 420px; }
+  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+  #searchInput { width: 100%; padding: 10px 14px 10px 38px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
+  #searchInput:focus { border-color: rgba(196,39,46,0.6); background: rgba(255,255,255,0.09); }
+  #searchInput::placeholder { color: var(--text-muted); }
+  .result-count { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; font-weight: 600; }
+
+  .tabs-wrap { padding: 0 40px; background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tabs { display: flex; gap: 0; min-width: max-content; }
+  .tab-btn { background: none; border: none; color: var(--text-muted); font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; padding: 14px 18px; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .tab-btn.active { color: var(--red); border-bottom-color: var(--red); background: rgba(196,39,46,0.06); }
+
+  main { padding: 32px 40px; max-width: 1300px; margin: 0 auto; }
+  .section { display: none; }
+  .section.visible { display: block; }
+  .section-header { margin-bottom: 24px; }
+  .section-title { font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; max-width: 700px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(540px, 1fr)); gap: 16px; }
+  @media (max-width: 700px) { .cards { grid-template-columns: 1fr; } main { padding: 20px 16px; } header { padding: 20px 16px 16px; } .tabs-wrap { padding: 0 16px; } }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.2s, transform 0.15s; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .card:hover { border-color: rgba(196,39,46,0.4); transform: translateY(-1px); }
+  .card-wide { grid-column: 1 / -1; }
+
+  .card-header { padding: 14px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--border); background: var(--surface2); }
+  .card-meta { flex: 1; }
+  .measure-name { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px; line-height: 1.2; }
+  .measure-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
+  .tag-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+  .tag { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; }
+  .tag-table { background: rgba(9,46,87,0.7); border: 1px solid rgba(100,150,210,0.3); color: #7ab0e0; }
+  .tag-type { background: rgba(196,39,46,0.15); border: 1px solid rgba(196,39,46,0.3); color: #e07078; }
+  .tag-new { background: rgba(46,204,135,0.15); border: 1px solid rgba(46,204,135,0.3); color: #2ecc87; }
+
+  .copy-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); cursor: pointer; padding: 6px 10px; font-size: 0.7rem; font-family: 'Syne', sans-serif; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; transition: all 0.15s; display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+  .copy-btn:hover { background: rgba(196,39,46,0.15); border-color: rgba(196,39,46,0.4); color: var(--red); }
+  .copy-btn.copied { background: rgba(46,204,135,0.15); border-color: rgba(46,204,135,0.4); color: var(--success); }
+
+  .card-body { padding: 14px 16px; background: var(--code-bg); }
+  pre { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.7; color: #c8daf0; white-space: pre-wrap; word-break: break-word; }
+
+  .setup-block { background: var(--surface2); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; }
+  .setup-block h3 { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 7px; }
+  .setup-block p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 8px; }
+  .setup-block ul { padding-left: 18px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.8; }
+  .setup-block li strong { color: var(--text); }
+
+  .rel-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 10px; }
+  .rel-table th { background: var(--surface3); color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.68rem; padding: 8px 12px; text-align: left; border: 1px solid var(--border); }
+  .rel-table td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .rel-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  code { font-family: 'JetBrains Mono', monospace; font-size: 0.8em; color: #ffcb6b; background: rgba(255,203,107,0.1); padding: 1px 5px; border-radius: 3px; }
+
+  .note { background: rgba(196,39,46,0.08); border: 1px solid rgba(196,39,46,0.2); border-radius: 8px; padding: 10px 14px; font-size: 0.78rem; color: #dda0a3; line-height: 1.6; margin-bottom: 16px; }
+  .note strong { color: var(--red); }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  .empty-state svg { margin-bottom: 16px; opacity: 0.4; }
+  .empty-state h3 { font-size: 1rem; margin-bottom: 6px; color: var(--text); }
+  .empty-state p { font-size: 0.82rem; }
+
+  .hidden { display: none !important; }
+
+  #scrollTop { position: fixed; bottom: 24px; right: 24px; width: 40px; height: 40px; background: var(--red); border: none; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; box-shadow: 0 4px 16px rgba(196,39,46,0.4); z-index: 999; }
+  #scrollTop.visible { opacity: 1; pointer-events: all; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-title">
+      <div class="logo-block">fx</div>
+      <div>
+        <h1>iFAMS <span>DAX</span> Reference Guide</h1>
+        <div class="subtitle">Financial &amp; Customer Quality Division &nbsp;·&nbsp; Genesys Phone Metrics</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <span class="badge">Power BI</span>
+      <span class="badge">3 Tables</span>
+      <span class="badge">CSV-Verified</span>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="searchInput" type="text" placeholder="Search measures, functions, columns…" autocomplete="off"/>
+    </div>
+    <span class="result-count" id="resultCount"></span>
+  </div>
+</header>
+
+<div class="tabs-wrap">
+  <nav class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="setup">⚙️ Setup First</button>
+    <button class="tab-btn" data-tab="agent-perf">📞 Agent Performance</button>
+    <button class="tab-btn" data-tab="agent-status">🟢 Agent Status</button>
+    <button class="tab-btn" data-tab="team-queue">👥 Team / Queue</button>
+    <button class="tab-btn" data-tab="sentiment">💬 Sentiment</button>
+    <button class="tab-btn" data-tab="pay-period">📅 Pay Period</button>
+    <button class="tab-btn" data-tab="formatting">🔧 Formatting</button>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ══════════════════════════════════ SETUP FIRST -->
+  <section class="section visible" id="tab-setup">
+    <div class="section-header">
+      <div class="section-title">⚙️ Setup First</div>
+      <p class="section-desc">Create these tables and relationships before building any measures. Column names in this guide are CSV-verified against your actual Genesys exports and Power Query transformations.</p>
+    </div>
+
+    <div class="note"><strong>Order matters:</strong> Date Table → Names Table → Relationships → then measures. All column names in this guide reflect post-Power Query transformation names (renamed columns included).</div>
+
+    <div class="setup-block">
+      <h3>📋 Your 3-Table Model</h3>
+      <table class="rel-table">
+        <tr><th>Table</th><th>Grain</th><th>Key Columns</th></tr>
+        <tr><td><code>Agent_Performance_Summary</code></td><td>Agent + Interval</td><td>Agent Name (last name), PPE Date, Pay Period#, PP Label, Interval Start/End</td></tr>
+        <tr><td><code>Agent_Status_Details</code></td><td>Agent + Interval</td><td>Agent Name (last name), Log In, Log Out, Interval Start/End</td></tr>
+        <tr><td><code>Team_Performance_Queue_Detail</code></td><td>Interval (no agent)</td><td>Interval Start/End, Offer, Answer, Abandon, Svc Level%</td></tr>
+      </table>
+    </div>
+
+    <div class="setup-block">
+      <h3>🔁 Power Query Column Renames (Team_Performance_Queue_Detail)</h3>
+      <p>Your M code renames these columns — use the RIGHT column in all DAX measures:</p>
+      <table class="rel-table">
+        <tr><th>Original CSV Name</th><th>Power BI Name (use this in DAX)</th></tr>
+        <tr><td>Average Sentiment Score</td><td><code>Avg Sentiment Score</code></td></tr>
+        <tr><td>Negative Sentiment Instances</td><td><code>Neg Instances</code></td></tr>
+        <tr><td>Positive Sentiment Instances</td><td><code>Pos Instances</code></td></tr>
+        <tr><td>Service Level %</td><td><code>Svc Level%</code></td></tr>
+        <tr><td>ASA</td><td><code>AvgSpeedAnswer</code></td></tr>
+      </table>
+    </div>
+
+    <div class="cards">
+
+      <div class="card card-wide" data-search="date table calendar dax create calculated">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">📅 Date Table (Calculated Table)</div>
+            <div class="measure-desc">Create as a New Table in Power BI. Mark as Date Table after creating (Table Tools → Mark as Date Table → select [Date]).</div>
+            <div class="tag-row"><span class="tag tag-table">Calculated Table</span><span class="tag tag-type">Required First</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Date_Table =
+ADDCOLUMNS(
+    CALENDAR( DATE(2024, 1, 1), DATE(2027, 12, 31) ),
+    "Year",           YEAR([Date]),
+    "Month Num",      MONTH([Date]),
+    "Month Name",     FORMAT([Date], "MMMM"),
+    "Month Short",    FORMAT([Date], "MMM"),
+    "Quarter",        "Q" & QUARTER([Date]),
+    "Week Number",    WEEKNUM([Date]),
+    "Day of Week",    WEEKDAY([Date], 2),
+    "Day Name",       FORMAT([Date], "dddd"),
+    "Is Weekend",     IF(WEEKDAY([Date], 2) >= 6, TRUE, FALSE),
+    "Month Year",     FORMAT([Date], "MMM YYYY"),
+    "Year Month Num", YEAR([Date]) * 100 + MONTH([Date])
+)</pre></div>
+      </div>
+
+      <div class="card card-wide" data-search="names table agent union distinct calculated">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">👤 Names Table (Calculated Table)</div>
+            <div class="measure-desc">Pulls unique last names from both agent tables. Agent Name is already trimmed to last name by Power Query. Use as the "one" side of relationships to both agent tables.</div>
+            <div class="tag-row"><span class="tag tag-table">Calculated Table</span><span class="tag tag-type">Required First</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Names_Table =
+DISTINCT(
+    UNION(
+        SELECTCOLUMNS(
+            Agent_Performance_Summary,
+            "Agent Name", Agent_Performance_Summary[Agent Name]
+        ),
+        SELECTCOLUMNS(
+            Agent_Status_Details,
+            "Agent Name", Agent_Status_Details[Agent Name]
+        )
+    )
+)
+
+-- NOTE: Filter out the "SummaryRow" placeholder added by Power Query
+-- Add this filter to agent-level measures when needed:
+-- FILTER( Names_Table, Names_Table[Agent Name] <> "SummaryRow" )</pre></div>
+      </div>
+
+      <div class="card card-wide" data-search="relationships model setup connect tables">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">🔗 Relationship Setup Reference</div>
+            <div class="measure-desc">Set in Model View. Single direction. Disable Power BI autodetect first: File → Options → Data Load → uncheck Autodetect relationships.</div>
+            <div class="tag-row"><span class="tag tag-table">Model View</span><span class="tag tag-type">Setup Note</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>-- RELATIONSHIPS (set manually in Model View)
+-- Cardinality: One (*) to Many unless noted
+-- Direction: Single (→)
+
+Names_Table[Agent Name]
+    → Agent_Performance_Summary[Agent Name]      -- 1:*
+
+Names_Table[Agent Name]
+    → Agent_Status_Details[Agent Name]           -- 1:*
+
+Date_Table[Date]
+    → Agent_Performance_Summary[PPE Date]        -- 1:*
+
+Date_Table[Date]
+    → Agent_Status_Details[Interval Start]       -- 1:*
+    -- OR connect to [Log In] date if you extract date from that column
+
+-- Team_Performance_Queue_Detail:
+-- Extract a date column from [Interval Start] in Power Query, then:
+-- Date_Table[Date] → Team_Performance_Queue_Detail[Interval Date]  -- 1:*</pre></div>
+      </div>
+
+      <div class="card card-wide" data-search="pay period calculated column anchor date 2026">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">📆 Pay Period# Info (Already in Power Query)</div>
+            <div class="measure-desc">Your Pay Period# is already calculated in Power Query — no DAX calculated column needed. Anchor date is Jan 11, 2026. PP Label is also created there. Shown here for reference.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">Power Query Reference</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>-- These already exist as columns from Power Query — don't recreate in DAX:
+--   [PPE Date]     → Pay period end date (date type)
+--   [Pay Period#]  → Integer, anchored to 2026-01-11
+--   [PP Label]     → "PP1", "PP2", etc.
+
+-- If you ever need to rebuild Pay Period# as a DAX calculated column:
+Pay Period# =
+    Number.RoundDown(
+        Duration.Days([Interval Start] - #date(2026,1,11)) / 14
+    ) + 1
+
+-- PP Label DAX version:
+PP Label = "PP" & Text.From([Pay Period#])</pre></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ AGENT PERFORMANCE -->
+  <section class="section" id="tab-agent-perf">
+    <div class="section-header">
+      <div class="section-title">📞 Agent Performance</div>
+      <p class="section-desc">Measures from <code>Agent_Performance_Summary</code>. One row per agent per interval. Agent Name is last name only (Power Query strips first name). Filter out "SummaryRow" where needed.</p>
+    </div>
+    <div class="cards">
+
+      <div class="card" data-search="total answered calls sum agent performance summary">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Answered</div>
+            <div class="measure-desc">Total calls answered by agents across all intervals.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Answered =
+SUM( Agent_Performance_Summary[Answered] )</pre></div>
+      </div>
+
+      <div class="card" data-search="total handle handled calls sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Handle</div>
+            <div class="measure-desc">Total calls handled (may differ from Answered — includes callbacks and consults).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Handle =
+SUM( Agent_Performance_Summary[Handle] )</pre></div>
+      </div>
+
+      <div class="card" data-search="total transferred transfer sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Transferred</div>
+            <div class="measure-desc">Total calls transferred out by agents.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Transferred =
+SUM( Agent_Performance_Summary[Transferred] )</pre></div>
+      </div>
+
+      <div class="card" data-search="blind transfer sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Blind Transfers</div>
+            <div class="measure-desc">Calls transferred without warm introduction — a coaching/quality metric.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Blind Transfers =
+SUM( Agent_Performance_Summary[Blind Transfer] )</pre></div>
+      </div>
+
+      <div class="card" data-search="consult transfer sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Consult Transfers</div>
+            <div class="measure-desc">Calls transferred after consulting with another party first.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Consult Transfers =
+SUM( Agent_Performance_Summary[Consult Transfer] )</pre></div>
+      </div>
+
+      <div class="card" data-search="total consult sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Consults</div>
+            <div class="measure-desc">Agent consulted another party without transferring.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Consults =
+SUM( Agent_Performance_Summary[Consult] )</pre></div>
+      </div>
+
+      <div class="card" data-search="held hold sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Held</div>
+            <div class="measure-desc">Number of times agents placed callers on hold.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Held =
+SUM( Agent_Performance_Summary[Held] )</pre></div>
+      </div>
+
+      <div class="card" data-search="alert no answer sum agent missed">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Alert - No Answer</div>
+            <div class="measure-desc">Calls that rang but weren't answered by the agent. Key adherence/availability metric.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Alert - No Answer =
+SUM( Agent_Performance_Summary[Alert - No Answer] )</pre></div>
+      </div>
+
+      <div class="card" data-search="total acw after call work sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total ACW</div>
+            <div class="measure-desc">Count of after-call work events (not duration — duration is in Avg ACW).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total ACW =
+SUM( Agent_Performance_Summary[ACW] )</pre></div>
+      </div>
+
+      <div class="card" data-search="total handle seconds sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Handle Time (s)</div>
+            <div class="measure-desc">Sum of all handle time in seconds across all agent interactions.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Handle Time (s) =
+SUM( Agent_Performance_Summary[Total Handle] )</pre></div>
+      </div>
+
+      <div class="card" data-search="avg average handle time seconds agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Handle Time (s)</div>
+            <div class="measure-desc">Average handle time per call in seconds. Pair with MM:SS formatter for display.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Handle Time (s) =
+AVERAGE( Agent_Performance_Summary[Avg Handle] )</pre></div>
+      </div>
+
+      <div class="card" data-search="avg average talk time seconds agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Talk Time (s)</div>
+            <div class="measure-desc">Average time agents spent talking per call (excludes hold and ACW).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Talk Time (s) =
+AVERAGE( Agent_Performance_Summary[Avg Talk] )</pre></div>
+      </div>
+
+      <div class="card" data-search="avg average hold time seconds agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Hold Time (s)</div>
+            <div class="measure-desc">Average time callers spent on hold per interaction.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Hold Time (s) =
+AVERAGE( Agent_Performance_Summary[Avg Hold] )</pre></div>
+      </div>
+
+      <div class="card" data-search="avg average acw after call work time seconds agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg ACW Time (s)</div>
+            <div class="measure-desc">Average after-call work duration per interaction.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg ACW Time (s) =
+AVERAGE( Agent_Performance_Summary[Avg ACW] )</pre></div>
+      </div>
+
+      <div class="card" data-search="asa speed answer average agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Speed of Answer - Agent (s)</div>
+            <div class="measure-desc">Average time from alert to agent answering at the agent level. Column stays as ASA in this table (not renamed).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Speed of Answer - Agent (s) =
+AVERAGE( Agent_Performance_Summary[ASA] )
+
+-- NOTE: In Team_Performance_Queue_Detail this column was renamed to
+-- [AvgSpeedAnswer] by Power Query. Use the correct table name!</pre></div>
+      </div>
+
+      <div class="card" data-search="distinct count unique agents agent name">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Distinct Agents</div>
+            <div class="measure-desc">Count of unique agent names. Consider filtering out "SummaryRow".</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">DISTINCTCOUNT</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Distinct Agents =
+CALCULATE(
+    DISTINCTCOUNT( Agent_Performance_Summary[Agent Name] ),
+    Agent_Performance_Summary[Agent Name] <> "SummaryRow"
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="active agents answered calculate filter">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Active Agents (with calls)</div>
+            <div class="measure-desc">Count of agents who answered at least one call in the current filter context.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">CALCULATE / DISTINCTCOUNT</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Active Agents =
+CALCULATE(
+    DISTINCTCOUNT( Agent_Performance_Summary[Agent Name] ),
+    Agent_Performance_Summary[Answered] > 0,
+    Agent_Performance_Summary[Agent Name] <> "SummaryRow"
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="error sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Errors</div>
+            <div class="measure-desc">Total system or routing error events logged against agents.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Errors =
+SUM( Agent_Performance_Summary[Error] )</pre></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ AGENT STATUS -->
+  <section class="section" id="tab-agent-status">
+    <div class="section-header">
+      <div class="section-title">🟢 Agent Status</div>
+      <p class="section-desc">Measures from <code>Agent_Status_Details</code>. All duration columns end in <code>(s)</code> — values are in seconds. Log In / Log Out are full datetime columns.</p>
+    </div>
+    <div class="cards">
+
+      <div class="card" data-search="logged in login sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Logged In (s)</div>
+            <div class="measure-desc">Total seconds agents were logged into the phone system. Denominator for adherence calculations.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Logged In (s) =
+SUM( Agent_Status_Details[Logged In (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="available sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Available (s)</div>
+            <div class="measure-desc">Total seconds agents were in Available status (ready to receive calls).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Available (s) =
+SUM( Agent_Status_Details[Available (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="on queue sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total On Queue (s)</div>
+            <div class="measure-desc">Total seconds agents were On Queue (actively able to receive queued calls).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total On Queue (s) =
+SUM( Agent_Status_Details[On Queue (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="off queue sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Off Queue (s)</div>
+            <div class="measure-desc">Total seconds agents were Off Queue (logged in but not taking calls).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Off Queue (s) =
+SUM( Agent_Status_Details[Off Queue (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="idle sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Idle (s)</div>
+            <div class="measure-desc">Total seconds agents were idle (available but not on a call). High idle may indicate overstaffing.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Idle (s) =
+SUM( Agent_Status_Details[Idle (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="interacting sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Interacting (s)</div>
+            <div class="measure-desc">Total seconds agents were actively interacting with a caller.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Interacting (s) =
+SUM( Agent_Status_Details[Interacting (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="busy sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Busy (s)</div>
+            <div class="measure-desc">Total seconds agents were in Busy status (on a call or in wrap-up).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span><span class="tag tag-new">CSV Verified</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Busy (s) =
+SUM( Agent_Status_Details[Busy (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="communicating sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Communicating (s)</div>
+            <div class="measure-desc">Total seconds agents were in Communicating status (active voice interaction).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span><span class="tag tag-new">CSV Verified</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Communicating (s) =
+SUM( Agent_Status_Details[Communicating (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="not responding sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Not Responding (s)</div>
+            <div class="measure-desc">Total seconds agents were in Not Responding status — alerted but didn't answer. Pairs with Alert - No Answer for adherence analysis.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span><span class="tag tag-new">CSV Verified</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Not Responding (s) =
+SUM( Agent_Status_Details[Not Responding (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="away sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Away (s)</div>
+            <div class="measure-desc">Total seconds agents were in Away status.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Away (s) =
+SUM( Agent_Status_Details[Away (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="break sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Break (s)</div>
+            <div class="measure-desc">Total seconds agents spent on Break.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Break (s) =
+SUM( Agent_Status_Details[Break (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="meal sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Meal (s)</div>
+            <div class="measure-desc">Total seconds agents spent on Meal break.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Meal (s) =
+SUM( Agent_Status_Details[Meal (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="meeting sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Meeting (s)</div>
+            <div class="measure-desc">Total seconds agents were in Meeting status. Useful for tracking scheduled non-phone time.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Meeting (s) =
+SUM( Agent_Status_Details[Meeting (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="training sum seconds agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Training (s)</div>
+            <div class="measure-desc">Total seconds agents were in Training status.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Training (s) =
+SUM( Agent_Status_Details[Training (s)] )</pre></div>
+      </div>
+
+      <div class="card" data-search="on queue percent average adherence agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg On Queue %</div>
+            <div class="measure-desc">Average percentage of logged-in time agents were On Queue. Key schedule adherence metric.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg On Queue % =
+AVERAGE( Agent_Status_Details[On Queue %] )</pre></div>
+      </div>
+
+      <div class="card" data-search="idle percent average agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Idle %</div>
+            <div class="measure-desc">Average percentage of on-queue time agents were idle (waiting for a call).</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Idle % =
+AVERAGE( Agent_Status_Details[Idle %] )</pre></div>
+      </div>
+
+      <div class="card" data-search="off queue percent average agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Off Queue %</div>
+            <div class="measure-desc">Average percentage of logged-in time agents were Off Queue.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Off Queue % =
+AVERAGE( Agent_Status_Details[Off Queue %] )</pre></div>
+      </div>
+
+      <div class="card" data-search="interacting percent average agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Interacting %</div>
+            <div class="measure-desc">Average percentage of time agents spent actively interacting. Occupancy indicator.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">AVERAGE</span><span class="tag tag-new">CSV Verified</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Interacting % =
+AVERAGE( Agent_Status_Details[Interacting %] )</pre></div>
+      </div>
+
+      <div class="card" data-search="not responding percent average agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Not Responding %</div>
+            <div class="measure-desc">Average percentage of time agents spent in Not Responding status. High values warrant coaching follow-up.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">AVERAGE</span><span class="tag tag-new">CSV Verified</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Not Responding % =
+AVERAGE( Agent_Status_Details[Not Responding %] )</pre></div>
+      </div>
+
+      <div class="card" data-search="available percent calculate divide logged in agent status">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Available % (Calculated)</div>
+            <div class="measure-desc">Available time as a percentage of total Logged In time. Cross-check against raw % columns.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">DIVIDE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Available % =
+DIVIDE(
+    SUM( Agent_Status_Details[Available (s)] ),
+    SUM( Agent_Status_Details[Logged In (s)] ),
+    0
+)</pre></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ TEAM / QUEUE -->
+  <section class="section" id="tab-team-queue">
+    <div class="section-header">
+      <div class="section-title">👥 Team / Queue</div>
+      <p class="section-desc">Measures from <code>Team_Performance_Queue_Detail</code>. No agent names — queue-level only. Several columns were renamed by Power Query — use the Power BI names shown in each card.</p>
+    </div>
+    <div class="cards">
+
+      <div class="card" data-search="total offer offered calls queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Offered</div>
+            <div class="measure-desc">Total calls offered to the queue. Base denominator for most rate measures.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Offered =
+SUM( Team_Performance_Queue_Detail[Offer] )</pre></div>
+      </div>
+
+      <div class="card" data-search="total answer answered queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Answered (Queue)</div>
+            <div class="measure-desc">Total calls answered at the queue level.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Answered (Queue) =
+SUM( Team_Performance_Queue_Detail[Answer] )</pre></div>
+      </div>
+
+      <div class="card" data-search="total abandon abandoned queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Abandoned</div>
+            <div class="measure-desc">Total calls where callers hung up before being answered.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Abandoned =
+SUM( Team_Performance_Queue_Detail[Abandon] )</pre></div>
+      </div>
+
+      <div class="card" data-search="abandon no short queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Abandon - No Short</div>
+            <div class="measure-desc">Abandoned calls excluding very short hangs-up. More meaningful for reporting.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Abandon - No Short =
+SUM( Team_Performance_Queue_Detail[Abandon - No Short] )</pre></div>
+      </div>
+
+      <div class="card" data-search="abandon rate percent divide queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Abandon Rate %</div>
+            <div class="measure-desc">Percentage of offered calls abandoned. Format as percentage in visual.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">DIVIDE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Abandon Rate % =
+DIVIDE(
+    SUM( Team_Performance_Queue_Detail[Abandon] ),
+    SUM( Team_Performance_Queue_Detail[Offer] ),
+    0
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="answer rate percent divide queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Answer Rate %</div>
+            <div class="measure-desc">Percentage of offered calls answered. Complement of Abandon Rate.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">DIVIDE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Answer Rate % =
+DIVIDE(
+    SUM( Team_Performance_Queue_Detail[Answer] ),
+    SUM( Team_Performance_Queue_Detail[Offer] ),
+    0
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="service level svc level percent queue team renamed">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Service Level %</div>
+            <div class="measure-desc">Calls answered within target threshold. Column renamed from "Service Level %" to "Svc Level%" by Power Query — use Svc Level% in DAX.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Service Level % =
+AVERAGE( Team_Performance_Queue_Detail[Svc Level%] )
+
+-- Also available (not renamed):
+-- [SL %]        → same metric, different Genesys column
+-- [SL Target %] → the target threshold value</pre></div>
+      </div>
+
+      <div class="card" data-search="over sla service level sum queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Over SLA</div>
+            <div class="measure-desc">Total calls that exceeded the service level time threshold.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Over SLA =
+SUM( Team_Performance_Queue_Detail[Over SLA] )</pre></div>
+      </div>
+
+      <div class="card" data-search="avg speed answer asa avgspeedanswer queue team renamed">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Speed of Answer (Queue)</div>
+            <div class="measure-desc">Column renamed from "ASA" to "AvgSpeedAnswer" by Power Query. Use AvgSpeedAnswer in DAX for this table.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Speed of Answer (Queue) =
+AVERAGE( Team_Performance_Queue_Detail[AvgSpeedAnswer] )
+
+-- NOTE: In Agent_Performance_Summary this column is still [ASA]
+-- Make sure you're referencing the right table!</pre></div>
+      </div>
+
+      <div class="card" data-search="avg wait time queue team average">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Wait Time (s)</div>
+            <div class="measure-desc">Average time callers waited in queue before reaching an agent or abandoning.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Wait Time (s) =
+AVERAGE( Team_Performance_Queue_Detail[Avg Wait] )</pre></div>
+      </div>
+
+      <div class="card" data-search="avg abandon time queue team average">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Abandon Time (s)</div>
+            <div class="measure-desc">Average time callers waited before abandoning. Indicates caller patience threshold.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Abandon Time (s) =
+AVERAGE( Team_Performance_Queue_Detail[Avg Abandon] )</pre></div>
+      </div>
+
+      <div class="card" data-search="flow out flowout sum queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Flow-Out</div>
+            <div class="measure-desc">Calls routed out of the queue to another destination. Note the hyphen in the column name.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Flow-Out =
+SUM( Team_Performance_Queue_Detail[Flow-Out] )
+
+-- If the hyphen causes an error, wrap in single quotes:
+-- SUM( Team_Performance_Queue_Detail['Flow-Out'] )</pre></div>
+      </div>
+
+      <div class="card" data-search="transfer rate percent queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Transfer Rate %</div>
+            <div class="measure-desc">Percentage of answered calls transferred out of this queue.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE / DIVIDE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>-- Option 1: Pre-calculated column from Genesys
+Transfer Rate % =
+AVERAGE( Team_Performance_Queue_Detail[Transfer %] )
+
+-- Option 2: Calculate from raw counts
+Transfer Rate % =
+DIVIDE(
+    SUM( Team_Performance_Queue_Detail[Transfer] ),
+    SUM( Team_Performance_Queue_Detail[Answer] ),
+    0
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="total talk hold acw handle sum queue team">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Talk / Hold / ACW / Handle (s)</div>
+            <div class="measure-desc">Cumulative time totals at the queue level. These exist in Team_Performance_Queue_Detail but not in Agent_Performance_Summary.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Talk (s) =
+SUM( Team_Performance_Queue_Detail[Total Talk] )
+
+Total Hold (s) =
+SUM( Team_Performance_Queue_Detail[Total Hold] )
+
+Total ACW (s) =
+SUM( Team_Performance_Queue_Detail[Total ACW] )
+
+Total Handle (s) =
+SUM( Team_Performance_Queue_Detail[Total Handle] )</pre></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ SENTIMENT -->
+  <section class="section" id="tab-sentiment">
+    <div class="section-header">
+      <div class="section-title">💬 Sentiment</div>
+      <p class="section-desc">Sentiment columns exist in both agent tables. Important: column names differ between tables due to Power Query renaming in <code>Team_Performance_Queue_Detail</code>.</p>
+    </div>
+    <div class="cards">
+
+      <div class="card card-wide" data-search="sentiment column name reference table differences">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">⚠️ Sentiment Column Name Reference</div>
+            <div class="measure-desc">Same data, different names — Power Query renamed these in Team_Performance_Queue_Detail only.</div>
+            <div class="tag-row"><span class="tag tag-type">Important Reference</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>-- Agent_Performance_Summary uses ORIGINAL names:
+Agent_Performance_Summary[Positive Sentiment Instances]
+Agent_Performance_Summary[Negative Sentiment Instances]
+Agent_Performance_Summary[Average Sentiment Score]
+Agent_Performance_Summary[Sentiment Instances]
+
+-- Team_Performance_Queue_Detail uses RENAMED names (Power Query):
+Team_Performance_Queue_Detail[Pos Instances]         -- renamed
+Team_Performance_Queue_Detail[Neg Instances]         -- renamed
+Team_Performance_Queue_Detail[Avg Sentiment Score]   -- renamed
+Team_Performance_Queue_Detail[Sentiment Instances]   -- unchanged
+Team_Performance_Queue_Detail[Avg Sentiment]         -- unchanged (different metric)</pre></div>
+      </div>
+
+      <div class="card" data-search="avg average sentiment score agent performance">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Sentiment Score (Agent)</div>
+            <div class="measure-desc">Average sentiment score per agent across interactions.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Sentiment Score (Agent) =
+AVERAGE( Agent_Performance_Summary[Average Sentiment Score] )</pre></div>
+      </div>
+
+      <div class="card" data-search="total positive sentiment instances sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Positive Instances (Agent)</div>
+            <div class="measure-desc">Count of positive sentiment instances from agent-level data.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Positive Instances (Agent) =
+SUM( Agent_Performance_Summary[Positive Sentiment Instances] )</pre></div>
+      </div>
+
+      <div class="card" data-search="total negative sentiment instances sum agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Total Negative Instances (Agent)</div>
+            <div class="measure-desc">Count of negative sentiment instances. High numbers may flag agents needing coaching.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Negative Instances (Agent) =
+SUM( Agent_Performance_Summary[Negative Sentiment Instances] )</pre></div>
+      </div>
+
+      <div class="card" data-search="positive sentiment rate percent divide agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Positive Sentiment Rate % (Agent)</div>
+            <div class="measure-desc">Percentage of scored calls rated positive at the agent level.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">DIVIDE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Positive Sentiment Rate % (Agent) =
+DIVIDE(
+    SUM( Agent_Performance_Summary[Positive Sentiment Instances] ),
+    SUM( Agent_Performance_Summary[Sentiment Instances] ),
+    0
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="negative sentiment rate percent divide agent">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Negative Sentiment Rate % (Agent)</div>
+            <div class="measure-desc">Percentage of scored calls rated negative at the agent level.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">DIVIDE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Negative Sentiment Rate % (Agent) =
+DIVIDE(
+    SUM( Agent_Performance_Summary[Negative Sentiment Instances] ),
+    SUM( Agent_Performance_Summary[Sentiment Instances] ),
+    0
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="avg sentiment score queue team renamed pos neg instances">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Avg Sentiment Score (Queue)</div>
+            <div class="measure-desc">Queue-level sentiment score. Column renamed from "Average Sentiment Score" to "Avg Sentiment Score" by Power Query.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Sentiment Score (Queue) =
+AVERAGE( Team_Performance_Queue_Detail[Avg Sentiment Score] )
+
+-- Also available — different metric:
+Avg Sentiment (Queue) =
+AVERAGE( Team_Performance_Queue_Detail[Avg Sentiment] )</pre></div>
+      </div>
+
+      <div class="card" data-search="positive negative instances queue team renamed">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Pos / Neg Instances (Queue)</div>
+            <div class="measure-desc">Renamed by Power Query — use Pos Instances and Neg Instances for this table.</div>
+            <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Total Pos Instances (Queue) =
+SUM( Team_Performance_Queue_Detail[Pos Instances] )
+
+Total Neg Instances (Queue) =
+SUM( Team_Performance_Queue_Detail[Neg Instances] )</pre></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ PAY PERIOD -->
+  <section class="section" id="tab-pay-period">
+    <div class="section-header">
+      <div class="section-title">📅 Pay Period</div>
+      <p class="section-desc">Time intelligence measures using your <code>Pay Period#</code>, <code>PP Label</code>, and <code>PPE Date</code> columns from <code>Agent_Performance_Summary</code>. Anchor date is Jan 11, 2026.</p>
+    </div>
+    <div class="cards">
+
+      <div class="card" data-search="current pay period max number">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Current Pay Period #</div>
+            <div class="measure-desc">Most recent Pay Period number in the data. Use in a Card visual to show which PP is displayed.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">MAX</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Current Pay Period # =
+MAX( Agent_Performance_Summary[Pay Period#] )</pre></div>
+      </div>
+
+      <div class="card" data-search="answered current pay period calculate filter">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Answered - Current PP</div>
+            <div class="measure-desc">Total answered calls for only the most recent pay period in the data.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">CALCULATE / VAR</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Answered - Current PP =
+VAR LatestPP = CALCULATE(
+    MAX( Agent_Performance_Summary[Pay Period#] ),
+    ALL( Agent_Performance_Summary )
+)
+RETURN
+CALCULATE(
+    SUM( Agent_Performance_Summary[Answered] ),
+    Agent_Performance_Summary[Pay Period#] = LatestPP
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="answered prior previous pay period calculate filter">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Answered - Prior PP</div>
+            <div class="measure-desc">Total answered calls for the pay period before the most recent one. Use alongside Current PP for comparison cards.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">CALCULATE / VAR</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Answered - Prior PP =
+VAR LatestPP = CALCULATE(
+    MAX( Agent_Performance_Summary[Pay Period#] ),
+    ALL( Agent_Performance_Summary )
+)
+RETURN
+CALCULATE(
+    SUM( Agent_Performance_Summary[Answered] ),
+    Agent_Performance_Summary[Pay Period#] = LatestPP - 1
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="pay period change difference variance trend">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">PP Answered Change (vs Prior PP)</div>
+            <div class="measure-desc">Difference between current and prior PP. Positive = improvement. Apply conditional formatting for green/red.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">Measure Reference</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>PP Answered Change =
+[Answered - Current PP] - [Answered - Prior PP]</pre></div>
+      </div>
+
+      <div class="card" data-search="pay period label selected slicer selectedvalue">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Selected PP Label</div>
+            <div class="measure-desc">Returns the PP Label of the currently selected pay period from a slicer. Use in dynamic card headers or report titles.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SELECTEDVALUE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Selected PP Label =
+SELECTEDVALUE(
+    Agent_Performance_Summary[PP Label],
+    "Multiple Periods Selected"
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="pay period ppe date range start end display">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">PP Date Range (Display)</div>
+            <div class="measure-desc">Readable date range string for the selected pay period. Use in a Card visual as a dynamic subtitle.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">VAR / FORMAT</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>PP Date Range =
+VAR EndDate   = MAX( Agent_Performance_Summary[PPE Date] )
+VAR StartDate = EndDate - 13
+RETURN
+    FORMAT(StartDate, "M/D/YYYY") & " – " & FORMAT(EndDate, "M/D/YYYY")</pre></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ FORMATTING -->
+  <section class="section" id="tab-formatting">
+    <div class="section-header">
+      <div class="section-title">🔧 Formatting Helpers</div>
+      <p class="section-desc">Reusable patterns for converting seconds, building dynamic titles, conditional formatting, and other display utilities.</p>
+    </div>
+    <div class="cards">
+
+      <div class="card card-wide" data-search="format seconds hh mm ss hours minutes convert time">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Format Seconds → H:MM:SS</div>
+            <div class="measure-desc">For status durations (Available, Logged In, etc.) Replace the VAR with your actual measure name.</div>
+            <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">VAR / FORMAT</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Available Time Display =
+VAR TotalSec = [Total Available (s)]        -- ← swap in your measure
+VAR Hours    = INT( TotalSec / 3600 )
+VAR Minutes  = INT( MOD( TotalSec, 3600 ) / 60 )
+VAR Seconds  = MOD( TotalSec, 60 )
+RETURN
+    FORMAT(Hours,   "0")    & ":"
+  & FORMAT(Minutes, "00")   & ":"
+  & FORMAT(Seconds, "00")</pre></div>
+      </div>
+
+      <div class="card card-wide" data-search="format seconds mm ss minutes convert time avg handle talk">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Format Seconds → M:SS</div>
+            <div class="measure-desc">For call metrics like Avg Handle Time, Avg Talk Time where values are under an hour.</div>
+            <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">VAR / FORMAT</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Avg Handle Time Display =
+VAR TotalSec = [Avg Handle Time (s)]        -- ← swap in your measure
+VAR Minutes  = INT( TotalSec / 60 )
+VAR Seconds  = MOD( TotalSec, 60 )
+RETURN
+    FORMAT(Minutes, "0") & ":" & FORMAT(Seconds, "00")</pre></div>
+      </div>
+
+      <div class="card" data-search="dynamic title report header selected value">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Dynamic Report Title</div>
+            <div class="measure-desc">Builds a report header that updates based on slicer selection. Use in a Card visual.</div>
+            <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SELECTEDVALUE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Report Title =
+"Team Performance  |  "
+  & SELECTEDVALUE(
+        Agent_Performance_Summary[PP Label],
+        "All Pay Periods"
+    )</pre></div>
+      </div>
+
+      <div class="card" data-search="divide safe template zero blank error">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Safe DIVIDE Template</div>
+            <div class="measure-desc">Always use DIVIDE instead of "/" to prevent division-by-zero errors. Third argument controls what returns when denominator is zero.</div>
+            <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">DIVIDE</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>-- Returns 0 when denominator is zero (good for rate cards)
+My Rate % =
+DIVIDE( [Numerator Measure], [Denominator Measure], 0 )
+
+-- Returns BLANK when denominator is zero (good for charts — hides bar)
+My Rate % =
+DIVIDE( [Numerator Measure], [Denominator Measure], BLANK() )</pre></div>
+      </div>
+
+      <div class="card" data-search="conditional formatting color threshold target goal switch">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Color Status Measure (Conditional Formatting)</div>
+            <div class="measure-desc">Returns a hex color based on whether a metric meets a target. Apply via Format → Conditional Formatting → Field value.</div>
+            <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">SWITCH / IF</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>-- Example: SL% color — adjust thresholds to match your targets
+SL Color =
+VAR SL = [Service Level %]
+RETURN
+SWITCH(
+    TRUE(),
+    SL >= 0.80,  "#2ecc87",   -- green: at or above 80%
+    SL >= 0.65,  "#f39c12",   -- amber: 65-79%
+    "#C4272E"                  -- red: below 65% (department red)
+)</pre></div>
+      </div>
+
+      <div class="card" data-search="last refreshed date today now footer">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">Last Refreshed (Display)</div>
+            <div class="measure-desc">Shows when the report data was last refreshed. Put in a Card visual in the report footer.</div>
+            <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">NOW / FORMAT</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>Last Refreshed =
+"Data as of " & FORMAT( NOW(), "M/D/YYYY h:MM AM/PM" )</pre></div>
+      </div>
+
+      <div class="card card-wide" data-search="calculate all filter context remove allexcept percent total">
+        <div class="card-header">
+          <div class="card-meta">
+            <div class="measure-name">CALCULATE + ALL / % of Total Pattern</div>
+            <div class="measure-desc">Ignore slicer context on a specific column. Essential for "% of total" and grand total reference measures.</div>
+            <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">CALCULATE / ALL</span></div>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+        </div>
+        <div class="card-body"><pre>-- Grand Total Answered (ignores all slicers)
+Grand Total Answered =
+CALCULATE(
+    SUM( Agent_Performance_Summary[Answered] ),
+    ALL( Agent_Performance_Summary )
+)
+
+-- Agent % of Total Answered
+Agent % of Total =
+DIVIDE(
+    SUM( Agent_Performance_Summary[Answered] ),
+    CALCULATE(
+        SUM( Agent_Performance_Summary[Answered] ),
+        ALL( Agent_Performance_Summary[Agent Name] )
+    ),
+    0
+)</pre></div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="empty-state hidden" id="emptyState">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <h3>No measures found</h3>
+    <p>Try a different search term or clear the search box.</p>
+  </div>
+
+</main>
+
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg>
+</button>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const sections = document.querySelectorAll('.section');
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('visible'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('visible');
+      clearSearch();
+    });
+  });
+
+  const searchInput = document.getElementById('searchInput');
+  const resultCount = document.getElementById('resultCount');
+  const emptyState  = document.getElementById('emptyState');
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase().trim();
+    if (q.length === 0) { clearSearch(); return; }
+
+    tabs.forEach(t => t.classList.remove('active'));
+    sections.forEach(s => s.classList.add('visible'));
+
+    let visible = 0;
+    document.querySelectorAll('.card').forEach(card => {
+      const searchable = (
+        (card.dataset.search || '') + ' ' +
+        (card.querySelector('.measure-name')?.textContent || '') + ' ' +
+        (card.querySelector('.measure-desc')?.textContent || '') + ' ' +
+        (card.querySelector('pre')?.textContent || '')
+      ).toLowerCase();
+      if (searchable.includes(q)) { card.classList.remove('hidden'); visible++; }
+      else { card.classList.add('hidden'); }
+    });
+
+    sections.forEach(s => {
+      const hasVisible = s.querySelectorAll('.card:not(.hidden)').length > 0
+                      || s.querySelectorAll('.setup-block').length > 0;
+      if (!hasVisible) s.classList.remove('visible');
+    });
+
+    resultCount.textContent = visible + ' result' + (visible !== 1 ? 's' : '');
+    emptyState.classList.toggle('hidden', visible > 0);
+  });
+
+  function clearSearch() {
+    searchInput.value = '';
+    resultCount.textContent = '';
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('hidden'));
+    emptyState.classList.add('hidden');
+    sections.forEach(s => s.classList.remove('visible'));
+    const activeTab = document.querySelector('.tab-btn.active');
+    if (activeTab) document.getElementById('tab-' + activeTab.dataset.tab).classList.add('visible');
+    else { document.getElementById('tab-setup').classList.add('visible'); tabs[0].classList.add('active'); }
+  }
+
+  function copyCode(btn) {
+    const text = btn.closest('.card').querySelector('pre').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
+      }, 2000);
+    });
+  }
+
+  const scrollBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => scrollBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>
