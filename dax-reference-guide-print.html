@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>iFAMS DAX Reference Guide — Print Version</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy: #092E57;
+    --navy-light: #e8eef5;
+    --red: #C4272E;
+    --gray: #E6E7E8;
+    --gray-dark: #6c7075;
+    --gray-mid: #b0b3b8;
+    --border: #dde3ea;
+    --code-bg: #f4f6f9;
+    --text: #1a2332;
+    --text-muted: #5a6a7e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: white;
+    color: var(--text);
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* ── SCREEN: print button bar ── */
+  .print-bar {
+    background: var(--navy);
+    color: white;
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .print-bar p {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .print-bar p strong { color: white; }
+
+  .btn-print {
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-print:hover { background: #a01f25; }
+
+  /* ── PAGE WRAPPER ── */
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 40px 48px;
+  }
+
+  /* ── DOCUMENT HEADER ── */
+  .doc-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 18px;
+    border-bottom: 3px solid var(--navy);
+    margin-bottom: 8px;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .doc-title-block { display: flex; align-items: center; gap: 14px; }
+
+  .logo-block {
+    width: 48px; height: 48px;
+    background: var(--red);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800; color: white;
+    letter-spacing: -1px; flex-shrink: 0;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+
+  h1 span { color: var(--red); }
+
+  .doc-subtitle {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 3px;
+  }
+
+  .doc-meta {
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .doc-meta strong { color: var(--navy); }
+
+  /* red accent bar below header */
+  .header-accent {
+    height: 4px;
+    background: linear-gradient(90deg, var(--red) 0%, var(--navy) 100%);
+    margin-bottom: 28px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 32px;
+    page-break-inside: avoid;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: white;
+    background: var(--navy);
+    padding: 7px 14px;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.3px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .section-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    padding: 8px 14px 12px;
+    background: var(--navy-light);
+    border-left: 3px solid var(--navy);
+    border-right: 3px solid var(--navy);
+    margin-bottom: 0;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .card-wide { grid-column: 1 / -1; }
+
+  /* ── CARD ── */
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .card-header {
+    background: var(--navy-light);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 12px;
+    border-left: 3px solid var(--navy);
+  }
+
+  .measure-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 2px;
+    line-height: 1.2;
+  }
+
+  .measure-desc {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .tag-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
+
+  .tag {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 1px 6px;
+    border-radius: 3px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .tag-table {
+    background: #dce8f5;
+    border: 1px solid #a8c8e8;
+    color: var(--navy);
+  }
+
+  .tag-type {
+    background: #fde8e9;
+    border: 1px solid #f0b0b3;
+    color: var(--red);
+  }
+
+  .tag-new {
+    background: #e0f7ed;
+    border: 1px solid #7dd5a8;
+    color: #1a7a4a;
+  }
+
+  .card-body {
+    padding: 10px 12px;
+    background: var(--code-bg);
+  }
+
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    line-height: 1.6;
+    color: #1a2332;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* ── SETUP BLOCKS ── */
+  .setup-block {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--red);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .setup-block h3 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .setup-block p {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+
+  /* ── TABLES ── */
+  .rel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.7rem;
+    margin-top: 8px;
+  }
+
+  .rel-table th {
+    background: var(--navy);
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.62rem;
+    padding: 6px 10px;
+    text-align: left;
+    border: 1px solid var(--border);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .rel-table td {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .rel-table tr:nth-child(even) td {
+    background: var(--navy-light);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78em;
+    color: var(--navy);
+    background: #dce8f5;
+    padding: 1px 4px;
+    border-radius: 3px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* ── NOTE ── */
+  .note {
+    background: #fff5f5;
+    border: 1px solid #f5c0c2;
+    border-left: 4px solid var(--red);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.72rem;
+    color: #7a2428;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .note strong { color: var(--red); }
+
+  /* ── PAGE BREAK HELPERS ── */
+  .break-before { page-break-before: always; }
+  .no-break { page-break-inside: avoid; break-inside: avoid; }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    margin-top: 40px;
+    padding-top: 14px;
+    border-top: 2px solid var(--navy);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .doc-footer strong { color: var(--red); }
+
+  /* ── PRINT MEDIA ── */
+  @media print {
+    .print-bar { display: none; }
+    body { font-size: 9pt; }
+    .page { padding: 20px 24px 32px; max-width: 100%; }
+    h1 { font-size: 1.2rem; }
+    pre { font-size: 0.62rem; }
+    .measure-name { font-size: 0.75rem; }
+    .measure-desc { font-size: 0.65rem; }
+    .cards { gap: 8px; }
+    .section { margin-bottom: 20px; }
+    .section-title { font-size: 0.88rem; padding: 5px 10px; }
+
+    /* force background colors to print */
+    * {
+      print-color-adjust: exact !important;
+      -webkit-print-color-adjust: exact !important;
+    }
+
+    /* page breaks between major sections */
+    .break-before { page-break-before: always; }
+    .card { page-break-inside: avoid; break-inside: avoid; }
+    .setup-block { page-break-inside: avoid; break-inside: avoid; }
+  }
+
+  @page {
+    size: letter;
+    margin: 0.6in 0.5in;
+  }
+</style>
+</head>
+<body>
+
+<!-- SCREEN-ONLY PRINT BAR -->
+<div class="print-bar">
+  <p><strong>Print Version</strong> — White background, optimized for Letter paper. Use your browser's Print dialog (Ctrl+P / Cmd+P) and enable "Background graphics" for full color.</p>
+  <button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- DOCUMENT HEADER -->
+  <div class="doc-header">
+    <div class="doc-title-block">
+      <div class="logo-block">fx</div>
+      <div>
+        <h1>iFAMS <span>DAX</span> Reference Guide</h1>
+        <div class="doc-subtitle">Financial &amp; Customer Quality Division &nbsp;·&nbsp; Genesys Phone Metrics</div>
+      </div>
+    </div>
+    <div class="doc-meta">
+      <div><strong>Power BI Desktop</strong></div>
+      <div>3 Tables · CSV-Verified</div>
+      <div>quality-csd-presents.com</div>
+    </div>
+  </div>
+  <div class="header-accent"></div>
+
+  <!-- ══════════════════════ SETUP FIRST -->
+  <div class="section no-break">
+    <div class="section-title">⚙️ Setup First</div>
+    <div class="section-desc">Create these tables and relationships BEFORE building any measures. All column names are CSV-verified against actual Genesys exports and Power Query transformations.</div>
+
+    <div style="margin-top:10px;">
+      <div class="note"><strong>Order matters:</strong> Date Table → Names Table → Relationships → then measures. Column names reflect post-Power Query transformation names.</div>
+
+      <div class="setup-block">
+        <h3>📋 Your 3-Table Model</h3>
+        <table class="rel-table">
+          <tr><th>Table</th><th>Grain</th><th>Key Columns</th></tr>
+          <tr><td><code>Agent_Performance_Summary</code></td><td>Agent + Interval</td><td>Agent Name (last), PPE Date, Pay Period#, PP Label, Interval Start/End</td></tr>
+          <tr><td><code>Agent_Status_Details</code></td><td>Agent + Interval</td><td>Agent Name (last), Log In, Log Out, Interval Start/End</td></tr>
+          <tr><td><code>Team_Performance_Queue_Detail</code></td><td>Interval only</td><td>Interval Start/End, Offer, Answer, Abandon, Svc Level%</td></tr>
+        </table>
+      </div>
+
+      <div class="setup-block">
+        <h3>🔁 Power Query Column Renames — Team_Performance_Queue_Detail</h3>
+        <table class="rel-table">
+          <tr><th>Original CSV Name</th><th>Power BI Name (use this in DAX)</th></tr>
+          <tr><td>Average Sentiment Score</td><td><code>Avg Sentiment Score</code></td></tr>
+          <tr><td>Negative Sentiment Instances</td><td><code>Neg Instances</code></td></tr>
+          <tr><td>Positive Sentiment Instances</td><td><code>Pos Instances</code></td></tr>
+          <tr><td>Service Level %</td><td><code>Svc Level%</code></td></tr>
+          <tr><td>ASA</td><td><code>AvgSpeedAnswer</code></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="cards" style="margin-top:10px;">
+
+      <div class="card card-wide">
+        <div class="card-header">
+          <div class="measure-name">📅 Date Table (New Table → paste in DAX editor)</div>
+          <div class="measure-desc">Mark as Date Table after creating: Table Tools → Mark as Date Table → select [Date]</div>
+          <div class="tag-row"><span class="tag tag-table">Calculated Table</span><span class="tag tag-type">Required First</span></div>
+        </div>
+        <div class="card-body"><pre>Date_Table =
+ADDCOLUMNS(
+    CALENDAR( DATE(2024, 1, 1), DATE(2027, 12, 31) ),
+    "Year",           YEAR([Date]),
+    "Month Num",      MONTH([Date]),
+    "Month Name",     FORMAT([Date], "MMMM"),
+    "Month Short",    FORMAT([Date], "MMM"),
+    "Quarter",        "Q" & QUARTER([Date]),
+    "Week Number",    WEEKNUM([Date]),
+    "Day Name",       FORMAT([Date], "dddd"),
+    "Is Weekend",     IF(WEEKDAY([Date], 2) >= 6, TRUE, FALSE),
+    "Month Year",     FORMAT([Date], "MMM YYYY"),
+    "Year Month Num", YEAR([Date]) * 100 + MONTH([Date])
+)</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">👤 Names Table</div>
+          <div class="measure-desc">Unique agent last names from both tables. Use as "one" side of relationships.</div>
+          <div class="tag-row"><span class="tag tag-table">Calculated Table</span><span class="tag tag-type">Required First</span></div>
+        </div>
+        <div class="card-body"><pre>Names_Table =
+DISTINCT(
+    UNION(
+        SELECTCOLUMNS( Agent_Performance_Summary,
+            "Agent Name",
+            Agent_Performance_Summary[Agent Name]
+        ),
+        SELECTCOLUMNS( Agent_Status_Details,
+            "Agent Name",
+            Agent_Status_Details[Agent Name]
+        )
+    )
+)
+-- Filter SummaryRow in agent measures:
+-- Agent Name <> "SummaryRow"</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">🔗 Relationships (Model View)</div>
+          <div class="measure-desc">Set manually. Single direction. Disable autodetect first: File → Options → Data Load.</div>
+          <div class="tag-row"><span class="tag tag-table">Model View</span><span class="tag tag-type">Setup Note</span></div>
+        </div>
+        <div class="card-body"><pre>Names_Table[Agent Name]
+    → Agent_Performance_Summary[Agent Name]  1:*
+
+Names_Table[Agent Name]
+    → Agent_Status_Details[Agent Name]       1:*
+
+Date_Table[Date]
+    → Agent_Performance_Summary[PPE Date]    1:*
+
+Date_Table[Date]
+    → Agent_Status_Details[Interval Start]   1:*
+
+-- Team_Performance_Queue_Detail:
+-- Extract date from Interval Start in Power Query
+-- Date_Table[Date] → [Interval Date]        1:*</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════ AGENT PERFORMANCE -->
+  <div class="section break-before">
+    <div class="section-title">📞 Agent Performance — Agent_Performance_Summary</div>
+    <div class="section-desc">One row per agent per interval. Agent Name = last name only (Power Query strips first name). Filter out "SummaryRow" where needed.</div>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Answered</div>
+          <div class="measure-desc">Total calls answered by agents.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Answered =
+SUM( Agent_Performance_Summary[Answered] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Handle</div>
+          <div class="measure-desc">Total calls handled (includes callbacks and consults).</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Handle =
+SUM( Agent_Performance_Summary[Handle] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Transferred</div>
+          <div class="measure-desc">Total calls transferred out by agents.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Transferred =
+SUM( Agent_Performance_Summary[Transferred] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Blind Transfers</div>
+          <div class="measure-desc">Transferred without warm introduction — quality metric.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Blind Transfers =
+SUM( Agent_Performance_Summary[Blind Transfer] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Consult Transfers</div>
+          <div class="measure-desc">Transferred after consulting with another party first.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Consult Transfers =
+SUM( Agent_Performance_Summary[Consult Transfer] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Alert - No Answer</div>
+          <div class="measure-desc">Calls that rang but weren't answered. Key adherence metric.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Alert - No Answer =
+SUM( Agent_Performance_Summary[Alert - No Answer] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Held / Total ACW</div>
+          <div class="measure-desc">Times callers placed on hold / after-call work event count.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Held =
+SUM( Agent_Performance_Summary[Held] )
+
+Total ACW =
+SUM( Agent_Performance_Summary[ACW] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Avg Handle / Talk / Hold / ACW (s)</div>
+          <div class="measure-desc">Average call time metrics in seconds. Pair with MM:SS formatter for display.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">AVERAGE</span></div>
+        </div>
+        <div class="card-body"><pre>Avg Handle Time (s) =
+AVERAGE( Agent_Performance_Summary[Avg Handle] )
+
+Avg Talk Time (s) =
+AVERAGE( Agent_Performance_Summary[Avg Talk] )
+
+Avg Hold Time (s) =
+AVERAGE( Agent_Performance_Summary[Avg Hold] )
+
+Avg ACW Time (s) =
+AVERAGE( Agent_Performance_Summary[Avg ACW] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Avg Speed of Answer — Agent (s)</div>
+          <div class="measure-desc">Column stays as [ASA] in this table (not renamed by Power Query).</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">AVERAGE</span></div>
+        </div>
+        <div class="card-body"><pre>Avg Speed of Answer - Agent (s) =
+AVERAGE( Agent_Performance_Summary[ASA] )
+-- NOTE: Queue table renames this to [AvgSpeedAnswer]</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Distinct Agents / Active Agents</div>
+          <div class="measure-desc">Unique agents in context / agents who answered ≥1 call. Filters SummaryRow.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">DISTINCTCOUNT / CALCULATE</span></div>
+        </div>
+        <div class="card-body"><pre>Distinct Agents =
+CALCULATE(
+    DISTINCTCOUNT( Agent_Performance_Summary[Agent Name] ),
+    Agent_Performance_Summary[Agent Name] <> "SummaryRow"
+)
+
+Active Agents =
+CALCULATE(
+    DISTINCTCOUNT( Agent_Performance_Summary[Agent Name] ),
+    Agent_Performance_Summary[Answered] > 0,
+    Agent_Performance_Summary[Agent Name] <> "SummaryRow"
+)</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════ AGENT STATUS -->
+  <div class="section break-before">
+    <div class="section-title">🟢 Agent Status — Agent_Status_Details</div>
+    <div class="section-desc">All duration columns end in (s) — values are in seconds. Log In / Log Out are full datetime columns.</div>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Logged In / On Queue / Off Queue (s)</div>
+          <div class="measure-desc">Core time buckets. Logged In is the denominator for adherence.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Logged In (s) =
+SUM( Agent_Status_Details[Logged In (s)] )
+
+Total On Queue (s) =
+SUM( Agent_Status_Details[On Queue (s)] )
+
+Total Off Queue (s) =
+SUM( Agent_Status_Details[Off Queue (s)] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Available / Idle / Interacting (s)</div>
+          <div class="measure-desc">Available = ready; Idle = waiting for call; Interacting = active with caller.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Available (s) =
+SUM( Agent_Status_Details[Available (s)] )
+
+Total Idle (s) =
+SUM( Agent_Status_Details[Idle (s)] )
+
+Total Interacting (s) =
+SUM( Agent_Status_Details[Interacting (s)] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Busy / Communicating / Not Responding (s)</div>
+          <div class="measure-desc">CSV-verified columns. Not Responding pairs with Alert - No Answer for adherence analysis.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span><span class="tag tag-new">CSV Verified</span></div>
+        </div>
+        <div class="card-body"><pre>Total Busy (s) =
+SUM( Agent_Status_Details[Busy (s)] )
+
+Total Communicating (s) =
+SUM( Agent_Status_Details[Communicating (s)] )
+
+Total Not Responding (s) =
+SUM( Agent_Status_Details[Not Responding (s)] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Away / Break / Meal / Meeting / Training (s)</div>
+          <div class="measure-desc">Scheduled off-queue time buckets.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Away (s) =
+SUM( Agent_Status_Details[Away (s)] )
+Total Break (s) =
+SUM( Agent_Status_Details[Break (s)] )
+Total Meal (s) =
+SUM( Agent_Status_Details[Meal (s)] )
+Total Meeting (s) =
+SUM( Agent_Status_Details[Meeting (s)] )
+Total Training (s) =
+SUM( Agent_Status_Details[Training (s)] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Avg On Queue % / Idle % / Off Queue % / Interacting % / Not Responding %</div>
+          <div class="measure-desc">Pre-calculated percentage columns from Genesys. On Queue % is the key schedule adherence metric.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">AVERAGE</span></div>
+        </div>
+        <div class="card-body"><pre>Avg On Queue % =
+AVERAGE( Agent_Status_Details[On Queue %] )
+Avg Idle % =
+AVERAGE( Agent_Status_Details[Idle %] )
+Avg Off Queue % =
+AVERAGE( Agent_Status_Details[Off Queue %] )
+Avg Interacting % =
+AVERAGE( Agent_Status_Details[Interacting %] )
+Avg Not Responding % =
+AVERAGE( Agent_Status_Details[Not Responding %] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Available % (Calculated)</div>
+          <div class="measure-desc">Cross-check against raw % columns. Use DIVIDE to avoid zero errors.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Status_Details</span><span class="tag tag-type">DIVIDE</span></div>
+        </div>
+        <div class="card-body"><pre>Available % =
+DIVIDE(
+    SUM( Agent_Status_Details[Available (s)] ),
+    SUM( Agent_Status_Details[Logged In (s)] ),
+    0
+)</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════ TEAM / QUEUE -->
+  <div class="section break-before">
+    <div class="section-title">👥 Team / Queue — Team_Performance_Queue_Detail</div>
+    <div class="section-desc">No agent names — queue-level only. Several columns renamed by Power Query — use the Power BI names shown below, not the original CSV names.</div>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Total Offered / Answered / Abandoned</div>
+          <div class="measure-desc">Core volume metrics. Offer is the base denominator for all rate measures.</div>
+          <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Offered =
+SUM( Team_Performance_Queue_Detail[Offer] )
+
+Total Answered (Queue) =
+SUM( Team_Performance_Queue_Detail[Answer] )
+
+Total Abandoned =
+SUM( Team_Performance_Queue_Detail[Abandon] )
+
+Total Abandon - No Short =
+SUM( Team_Performance_Queue_Detail[Abandon - No Short] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Abandon Rate % / Answer Rate %</div>
+          <div class="measure-desc">Abandon + Answer rates always sum to 100%. Format as percentage in visuals.</div>
+          <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">DIVIDE</span></div>
+        </div>
+        <div class="card-body"><pre>Abandon Rate % =
+DIVIDE(
+    SUM( Team_Performance_Queue_Detail[Abandon] ),
+    SUM( Team_Performance_Queue_Detail[Offer] ), 0
+)
+
+Answer Rate % =
+DIVIDE(
+    SUM( Team_Performance_Queue_Detail[Answer] ),
+    SUM( Team_Performance_Queue_Detail[Offer] ), 0
+)</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Service Level % ⚠️ renamed column</div>
+          <div class="measure-desc">"Service Level %" renamed to "Svc Level%" by Power Query. Use Svc Level% in DAX.</div>
+          <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE</span></div>
+        </div>
+        <div class="card-body"><pre>Service Level % =
+AVERAGE( Team_Performance_Queue_Detail[Svc Level%] )
+-- Also available (not renamed): [SL %], [SL Target %]</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Avg Speed of Answer ⚠️ renamed column</div>
+          <div class="measure-desc">"ASA" renamed to "AvgSpeedAnswer" by Power Query. Different from Agent table!</div>
+          <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE</span></div>
+        </div>
+        <div class="card-body"><pre>Avg Speed of Answer (Queue) =
+AVERAGE( Team_Performance_Queue_Detail[AvgSpeedAnswer] )
+-- Agent table uses: [ASA] (not renamed)</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Avg Wait / Avg Abandon / Total Over SLA</div>
+          <div class="measure-desc">Queue wait times and SLA threshold breaches.</div>
+          <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE / SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Avg Wait Time (s) =
+AVERAGE( Team_Performance_Queue_Detail[Avg Wait] )
+
+Avg Abandon Time (s) =
+AVERAGE( Team_Performance_Queue_Detail[Avg Abandon] )
+
+Total Over SLA =
+SUM( Team_Performance_Queue_Detail[Over SLA] )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Transfer Rate % / Total Flow-Out</div>
+          <div class="measure-desc">Flow-Out = calls routed to another queue. Note hyphen in column name.</div>
+          <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE / SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Transfer Rate % =
+AVERAGE( Team_Performance_Queue_Detail[Transfer %] )
+
+Total Flow-Out =
+SUM( Team_Performance_Queue_Detail[Flow-Out] )
+-- If error: SUM( Team_Performance_Queue_Detail['Flow-Out'] )</pre></div>
+      </div>
+
+      <div class="card card-wide">
+        <div class="card-header">
+          <div class="measure-name">Total Talk / Hold / ACW / Handle (s) — Queue level only</div>
+          <div class="measure-desc">These cumulative totals exist in Team_Performance_Queue_Detail but NOT in Agent_Performance_Summary.</div>
+          <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Total Talk (s) = SUM( Team_Performance_Queue_Detail[Total Talk] )
+Total Hold (s) = SUM( Team_Performance_Queue_Detail[Total Hold] )
+Total ACW (s)  = SUM( Team_Performance_Queue_Detail[Total ACW] )
+Total Handle (s) = SUM( Team_Performance_Queue_Detail[Total Handle] )</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SENTIMENT -->
+  <div class="section break-before">
+    <div class="section-title">💬 Sentiment</div>
+    <div class="section-desc">Sentiment exists in both agent tables but column names differ due to Power Query renaming in Team_Performance_Queue_Detail.</div>
+
+    <div class="cards">
+
+      <div class="card card-wide">
+        <div class="card-header">
+          <div class="measure-name">⚠️ Sentiment Column Name Reference — Different names per table!</div>
+          <div class="tag-row"><span class="tag tag-type">Important</span></div>
+        </div>
+        <div class="card-body"><pre>-- Agent_Performance_Summary uses ORIGINAL names:
+Agent_Performance_Summary[Positive Sentiment Instances]
+Agent_Performance_Summary[Negative Sentiment Instances]
+Agent_Performance_Summary[Average Sentiment Score]
+Agent_Performance_Summary[Sentiment Instances]
+
+-- Team_Performance_Queue_Detail uses RENAMED names:
+Team_Performance_Queue_Detail[Pos Instances]          -- renamed
+Team_Performance_Queue_Detail[Neg Instances]          -- renamed
+Team_Performance_Queue_Detail[Avg Sentiment Score]    -- renamed
+Team_Performance_Queue_Detail[Sentiment Instances]    -- unchanged
+Team_Performance_Queue_Detail[Avg Sentiment]          -- unchanged (different metric)</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Sentiment Measures — Agent Level</div>
+          <div class="measure-desc">Score, positive/negative counts and rates from Agent_Performance_Summary.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">AVERAGE / SUM / DIVIDE</span></div>
+        </div>
+        <div class="card-body"><pre>Avg Sentiment Score (Agent) =
+AVERAGE( Agent_Performance_Summary[Average Sentiment Score] )
+
+Total Positive Instances (Agent) =
+SUM( Agent_Performance_Summary[Positive Sentiment Instances] )
+
+Total Negative Instances (Agent) =
+SUM( Agent_Performance_Summary[Negative Sentiment Instances] )
+
+Positive Sentiment Rate % =
+DIVIDE(
+    SUM( Agent_Performance_Summary[Positive Sentiment Instances] ),
+    SUM( Agent_Performance_Summary[Sentiment Instances] ), 0
+)
+
+Negative Sentiment Rate % =
+DIVIDE(
+    SUM( Agent_Performance_Summary[Negative Sentiment Instances] ),
+    SUM( Agent_Performance_Summary[Sentiment Instances] ), 0
+)</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Sentiment Measures — Queue Level</div>
+          <div class="measure-desc">Use renamed column names for Team_Performance_Queue_Detail.</div>
+          <div class="tag-row"><span class="tag tag-table">Team_Performance_Queue_Detail</span><span class="tag tag-type">AVERAGE / SUM</span></div>
+        </div>
+        <div class="card-body"><pre>Avg Sentiment Score (Queue) =
+AVERAGE( Team_Performance_Queue_Detail[Avg Sentiment Score] )
+
+Total Pos Instances (Queue) =
+SUM( Team_Performance_Queue_Detail[Pos Instances] )
+
+Total Neg Instances (Queue) =
+SUM( Team_Performance_Queue_Detail[Neg Instances] )
+
+Avg Sentiment (Queue) =
+AVERAGE( Team_Performance_Queue_Detail[Avg Sentiment] )</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════ PAY PERIOD -->
+  <div class="section break-before">
+    <div class="section-title">📅 Pay Period — Agent_Performance_Summary</div>
+    <div class="section-desc">PPE Date, Pay Period#, and PP Label already exist as Power Query columns. Anchor date = Jan 11, 2026.</div>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Current PP # / Selected PP Label / PP Date Range</div>
+          <div class="measure-desc">Display measures for card visuals and dynamic report headers.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">MAX / SELECTEDVALUE / FORMAT</span></div>
+        </div>
+        <div class="card-body"><pre>Current Pay Period # =
+MAX( Agent_Performance_Summary[Pay Period#] )
+
+Selected PP Label =
+SELECTEDVALUE(
+    Agent_Performance_Summary[PP Label],
+    "Multiple Periods Selected"
+)
+
+PP Date Range =
+VAR EndDate   = MAX( Agent_Performance_Summary[PPE Date] )
+VAR StartDate = EndDate - 13
+RETURN
+    FORMAT(StartDate,"M/D/YYYY") & " – " & FORMAT(EndDate,"M/D/YYYY")</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Answered — Current PP / Prior PP / Change</div>
+          <div class="measure-desc">Period-over-period comparison. Swap [Answered] for any other SUM measure to replicate the pattern.</div>
+          <div class="tag-row"><span class="tag tag-table">Agent_Performance_Summary</span><span class="tag tag-type">CALCULATE / VAR</span></div>
+        </div>
+        <div class="card-body"><pre>Answered - Current PP =
+VAR LatestPP = CALCULATE(
+    MAX( Agent_Performance_Summary[Pay Period#] ),
+    ALL( Agent_Performance_Summary ) )
+RETURN CALCULATE(
+    SUM( Agent_Performance_Summary[Answered] ),
+    Agent_Performance_Summary[Pay Period#] = LatestPP )
+
+Answered - Prior PP =
+VAR LatestPP = CALCULATE(
+    MAX( Agent_Performance_Summary[Pay Period#] ),
+    ALL( Agent_Performance_Summary ) )
+RETURN CALCULATE(
+    SUM( Agent_Performance_Summary[Answered] ),
+    Agent_Performance_Summary[Pay Period#] = LatestPP - 1 )
+
+PP Answered Change =
+[Answered - Current PP] - [Answered - Prior PP]</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════ FORMATTING -->
+  <div class="section break-before">
+    <div class="section-title">🔧 Formatting Helpers</div>
+    <div class="section-desc">Reusable patterns for converting seconds, dynamic titles, conditional colors, and filter context.</div>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Format Seconds → H:MM:SS</div>
+          <div class="measure-desc">For status durations (Available, Logged In, etc.). Swap VAR value for your measure.</div>
+          <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">VAR / FORMAT</span></div>
+        </div>
+        <div class="card-body"><pre>Available Time Display =
+VAR TotalSec = [Total Available (s)]   -- ← swap
+VAR Hours    = INT( TotalSec / 3600 )
+VAR Minutes  = INT( MOD( TotalSec, 3600 ) / 60 )
+VAR Seconds  = MOD( TotalSec, 60 )
+RETURN
+    FORMAT(Hours,"0") & ":"
+  & FORMAT(Minutes,"00") & ":"
+  & FORMAT(Seconds,"00")</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Format Seconds → M:SS</div>
+          <div class="measure-desc">For call metrics like Avg Handle, Avg Talk (under an hour).</div>
+          <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">VAR / FORMAT</span></div>
+        </div>
+        <div class="card-body"><pre>Avg Handle Time Display =
+VAR TotalSec = [Avg Handle Time (s)]   -- ← swap
+VAR Minutes  = INT( TotalSec / 60 )
+VAR Seconds  = MOD( TotalSec, 60 )
+RETURN
+    FORMAT(Minutes,"0") & ":" & FORMAT(Seconds,"00")</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Safe DIVIDE / Last Refreshed / Dynamic Title</div>
+          <div class="measure-desc">Essential utilities for every report.</div>
+          <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">DIVIDE / NOW / SELECTEDVALUE</span></div>
+        </div>
+        <div class="card-body"><pre>-- Returns 0 when denominator = 0
+My Rate % = DIVIDE( [Numerator], [Denominator], 0 )
+-- Returns BLANK (hides bar in chart)
+My Rate % = DIVIDE( [Numerator], [Denominator], BLANK() )
+
+Last Refreshed =
+"Data as of " & FORMAT( NOW(), "M/D/YYYY h:MM AM/PM" )
+
+Report Title =
+"Team Performance  |  "
+  & SELECTEDVALUE( Agent_Performance_Summary[PP Label],
+                   "All Pay Periods" )</pre></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="measure-name">Color Status Measure (Conditional Formatting)</div>
+          <div class="measure-desc">Returns hex color based on threshold. Apply via Format → Conditional Formatting → Field value.</div>
+          <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">SWITCH / TRUE()</span></div>
+        </div>
+        <div class="card-body"><pre>SL Color =
+VAR SL = [Service Level %]
+RETURN
+SWITCH( TRUE(),
+    SL >= 0.80, "#2ecc87",   -- green
+    SL >= 0.65, "#f39c12",   -- amber
+    "#C4272E"                 -- red (dept red)
+)</pre></div>
+      </div>
+
+      <div class="card card-wide">
+        <div class="card-header">
+          <div class="measure-name">CALCULATE + ALL / Agent % of Total</div>
+          <div class="measure-desc">Ignore slicer context for grand totals and % of total calculations.</div>
+          <div class="tag-row"><span class="tag tag-table">Any Table</span><span class="tag tag-type">CALCULATE / ALL</span></div>
+        </div>
+        <div class="card-body"><pre>-- Grand Total (ignores all slicers)
+Grand Total Answered =
+CALCULATE(
+    SUM( Agent_Performance_Summary[Answered] ),
+    ALL( Agent_Performance_Summary )
+)
+
+-- Agent's share of total answered calls
+Agent % of Total =
+DIVIDE(
+    SUM( Agent_Performance_Summary[Answered] ),
+    CALCULATE(
+        SUM( Agent_Performance_Summary[Answered] ),
+        ALL( Agent_Performance_Summary[Agent Name] )
+    ), 0
+)</pre></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <div>Built by <strong>Quality CSD</strong> · Financial &amp; Customer Quality Division · Department of Veterans Affairs</div>
+    <div>quality-csd-presents.com/dax-reference-guide.html</div>
+  </div>
+
+</div><!-- end .page -->
+</body>
+</html>
